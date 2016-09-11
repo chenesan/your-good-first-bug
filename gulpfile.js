@@ -18,7 +18,7 @@ const cssnano = require('cssnano');
 const browserSync = require('browser-sync');
 
 // URL const
-const devUrl = 'http://localhost:3000/'; // equal to webpack entry
+const devUrl = 'http://localhost:8080/'; // equal to webpack entry
 const entryFile = './style/style.scss';
 const src = './style/**/*.scss';
 const dest = './public';
