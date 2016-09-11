@@ -1,0 +1,16 @@
+//-----------------------------------
+//
+// Image mixins
+//
+//-----------------------------------
+
+$image-path: './images/';
+
+@mixin mixin-background-image($name, $size: null, $position: center, $repeat: no-repeat) {
+  background-image: url('#{$image-path}#{$name}');
+  @if ($size != null) {
+    background-size: $size;
+  }
+  background-repeat: $repeat;
+  background-position: $position;
+}

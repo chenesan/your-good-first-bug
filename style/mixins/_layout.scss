@@ -1,0 +1,20 @@
+//---------------------------
+//
+// Layout Mixins
+//
+//---------------------------
+
+// vertiacl center should be used with position:relative/absolute
+@mixin vertical-center {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+// geven position-type same to component itself
+@mixin horizontal-center($position-type: relative) {
+  margin: 0 auto;
+  @if $position-type == absolute {
+    right: 0;
+    left: 0;
+  };
+}

@@ -1,0 +1,27 @@
+//-----------------------------
+//
+// Mixins for Debugging
+//
+//-----------------------------
+
+// toggle for switching debugging on and off
+$debug: true; //false !default;
+
+$debug-colors: (DarkRed, DarkOrange, Gold, SeaGreen, RoyalBlue, MidnightBlue, RebeccaPurple);
+
+@mixin debug-block($n) {
+  @if ($debug == true) {
+    border: 2px solid nth($debug-colors, $n);
+  }
+}
+
+$debug-image-path: 'ignored/';
+@mixin debug-match-design($image) {
+  body {
+    @include mixin-background-image('#{$debug-image-path}#{$image}', contain);
+    position: relative;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+}
