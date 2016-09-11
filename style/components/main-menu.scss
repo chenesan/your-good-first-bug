@@ -7,4 +7,5 @@ $menu-left: 0;
   left: $menu-left;
   width: 40px;
   height: 40px;
+  @include debug-block(4);
 }
