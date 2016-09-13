@@ -1,0 +1,16 @@
+$menu-top: 20%;
+$menu-left: 0;
+
+.menu-button {
+  position: fixed;
+  top: $menu-top;
+  left: $menu-left;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  @include debug-block(4);
+
+  &.-hide {
+    display: none;
+  }
+}

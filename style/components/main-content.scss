@@ -1,4 +1,8 @@
 .main-content {
   width: 100%;
   @include debug-block(2);
+
+  > .content {
+    @include debug-block(6);
+  }
 }

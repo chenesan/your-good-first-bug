@@ -1,0 +1,31 @@
+@media (max-width: 768px) {
+  .main-content > .main-menu {
+    display: none;
+  }
+
+  .main-app {
+    > .menu-button {
+      display: block;
+    }
+
+    > .main-menu {
+      display: block;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .main-content > .main-menu {
+    display: block;
+  }
+
+  .main-app {
+    > .menu-button {
+      display: none;
+    }
+
+    > .main-menu {
+      display: none;
+    }
+  }
+}

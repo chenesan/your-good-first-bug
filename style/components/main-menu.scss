@@ -1,11 +1,16 @@
-$menu-top: 20%;
-$menu-left: 0;
-
 .main-menu {
-  position: fixed;
-  top: $menu-top;
-  left: $menu-left;
-  width: 40px;
-  height: 40px;
-  @include debug-block(4);
+  @include debug-block(1);
+
+  &.-side {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transition: left 0.5s;
+  }
+
+  &.-hide {
+    left: -999px;
+    transition: left 0.5s;
+  }
 }
