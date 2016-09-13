@@ -1,0 +1,105 @@
+//---------------------------
+//
+// Color functions
+//
+//---------------------------
+// The color function takes three arguments:
+//  REQUIRED: Color
+//    There are 7 colors (gray, blue, green, red, yellow, black, white).
+//  OPTIONAL: Shade
+//    Each color has 6 shades (x-dark, dark, base, medium, light, x-light).
+//  OPTIONAL: Opacity
+//    Each shade has 11 levels of opacity, ranging from 0.0 to 1.0 (transparent to opaque).
+//
+// Example: color(blue);
+// This will create a base blue that is fully opaque.
+//
+// Example 2: color(red, dark, 0.8);
+// This will create a dark red that is 80% opaque.
+//
+// Example 3: color(yellow, 0.6);
+// This will create a base yellow that is 60% opaque.
+//
+//---------------------------
+@function color($name, $properties...) {
+  $n: length($properties);
+  $i: 1;
+
+  $shade-val: 'base';
+  $alpha-val: 1;
+
+  @while $i <= $n {
+    $current-property: (nth($properties, $i));
+
+    @if type-of($current-property) == 'string' {
+      $shade-val: $current-property;
+    } @else if type-of($current-property) == 'number' {
+      $alpha-val: $current-property;
+    }
+
+    $i: $i + 1;
+  }
+
+  @if map-has-key($standard-colors, $name) {
+    $rgb-val: ();
+
+    @if $name == white or $name == black {
+      $rgb-val: map-get($standard-colors, $name);
+    } @else {
+      $rgb-val: map-get(map-get($standard-colors, $name), $shade-val);
+    }
+
+    @return rgba($rgb-val, $alpha-val);
+  } @else {
+    @warn 'No global color called #{$name} found.'
+    + "Are you sure it's in `variables/colors?`";
+  }
+}
+
+//---------------------------
+//
+// The theme-color function takes three arguments:
+//  REQUIRED: Color
+//  OPTIONAL: Shade
+//  OPTIONAL: Opacity
+//
+// Example: theme-color(primary);
+// This will create a base primary that is fully opaque.
+//
+// Example 2: theme-color(secondary, light70, 0.8);
+// This will create a light70 secondary that is 80% opaque.
+//
+// Example 3: theme-color(danger, 0.6);
+// This will create a base danger that is 60% opaque.
+//
+//---------------------------
+
+@function theme-color($name, $properties...) {
+  $n: length($properties);
+  $i: 1;
+
+  $shade-val: 'base';
+  $alpha-val: 1;
+
+  @while $i <= $n {
+    $current-property: (nth($properties, $i));
+
+    @if type-of($current-property) == 'string' {
+      $shade-val: $current-property;
+    } @else if type-of($current-property) == 'number' {
+      $alpha-val: $current-property;
+    }
+
+    $i: $i + 1;
+  }
+
+  @if map-has-key($theme-colors, $name) {
+    $rgb-val: ();
+    $rgb-val: map-get(map-get($theme-colors, $name), $shade-val);
+
+    @return rgba($rgb-val, $alpha-val);
+  } @else {
+    @warn 'No theme color called #{$name} found.'
+    + "Are you sure it's in `variables/colors?`";
+  }
+}
