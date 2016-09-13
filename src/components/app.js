@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Menu from './menu';
 
 class App extends Component {
   constructor() {
@@ -22,16 +23,13 @@ class App extends Component {
   render() {
     return (
       <div className="main-app container">
-        <div className="main-jumbotron">jumbotron</div>
+        <header className="main-jumbotron">jumbotron</header>
         <div className="main-content">
-          <div className="main-menu col-sm-2">menu</div>
+          <Menu gridClass="col-sm-2" />
           <div className="content col-xs-12 col-sm-5">content1</div>
           <div className="content col-xs-12 col-sm-5">content2</div>
         </div>
-        <div
-          className={`main-menu col-xs-4 -side${this.state.showMenu ? '' : ' -hide'}`}
-          onClick={this.handleClickOnMenuButton}
-        >menu</div>
+        <Menu hide={!this.state.showMenu} gridClass="col-xs-4" side />
         <div
           className={`menu-button${this.state.showMenu ? ' -hide' : ' -side'}`}
           onClick={this.handleClickOnMenuButton}
