@@ -22,23 +22,55 @@ class App extends Component {
   }
   render() {
     return (
-      <div className="main-app container">
+      <main className="main-app container">
         <header className="main-jumbotron">jumbotron</header>
         <div className="main-content">
           <Menu gridClass="col-sm-2" />
-          <div className="content col-xs-12 col-sm-5">content1</div>
-          <div className="content col-xs-12 col-sm-5">content2</div>
+          <div className="content col-xs-12 col-sm-10">
+            {
+              this.props.bugList.map((bugData) => (
+                <article className="bug-item col-xs-12 col-sm-5">
+                  <h3 className="title">{bugData.title}</h3>
+                  <footer className="metadata">
+                    <span className="organizer">{bugData.organizer}</span>
+                    /
+                    <span className="project">{bugData.project}</span>
+                    <div className="languages">
+                    {
+                      bugData.languages.map(
+                          (language) => <span className="language">{language}</span>
+                        )
+                      }
+                    </div>
+                    <address className="sources">
+                      <a href={bugData.url} className="issue">Issue source</a>
+                      <a href={bugData.projectUrl} className="project">project source</a>
+                    </address>
+                    <time className="timestamp">{bugData.timestamp}</time>
+                  </footer>
+                </article>
+              ))
+            }
+          </div>
         </div>
         <Menu hide={!this.state.showMenu} gridClass="col-xs-4" side />
-        <div
+        <button
           className={`menu-button${this.state.showMenu ? ' -hide' : ' -side'}`}
           onClick={this.handleClickOnMenuButton}
-        >button</div>
-      </div>
+        >button</button>
+      </main>
     );
   }
 }
 
-App.propTypes = {};
+App.propTypes = {
+  bugList: React.PropTypes.arrayOf((propVal, key) => {
+    // todo: validator
+    if (!propVal.title) {
+      return new Error(`Bug lack of title: ${propVal} with key ${key}`);
+    }
+    return propVal;
+  }),
+};
 
 export default App;
