@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BugItem from './bug-item';
+import Jumbotron from './jumbotron';
 import Menu from './menu';
 
 class App extends Component {
@@ -24,7 +25,7 @@ class App extends Component {
   render() {
     return (
       <main className="main-app container">
-        <header className="main-jumbotron">jumbotron</header>
+        <Jumbotron title="Your Good First Bug" />
         <div className="main-content">
           <Menu gridClass="col-sm-2" />
           <div className="content col-xs-12 col-sm-10">
