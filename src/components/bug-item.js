@@ -12,9 +12,9 @@ class BugItem extends Component {
           <div className="languages">
           {
             this.props.bugData.languages.map(
-                (language) => <span className="language">{language}</span>
-              )
-            }
+              (language) => <span className="language">{language}</span>
+            )
+          }
           </div>
           <address className="sources">
             <a href={this.props.bugData.url} className="issue">Issue source</a>
