@@ -20,7 +20,7 @@ class BugItem extends Component {
             <a href={this.props.bugData.url} className="issue">Issue source</a>
             <a href={this.props.bugData.projectUrl} className="project">project source</a>
           </address>
-          <time className="timestamp">{this.props.bugData.timestamp}</time>
+          <time className="date">{this.props.bugData.date}</time>
         </footer>
       </article>
     );
@@ -34,7 +34,7 @@ BugItem.propTypes = {
     organizer: React.PropTypes.string.isRequired,
     project: React.PropTypes.string.isRequired,
     projectUrl: React.PropTypes.string.isRequired,
-    timestamp: React.PropTypes.instanceOf(Date),
+    date: React.PropTypes.instanceOf(Date),
     url: React.PropTypes.string.isRequired,
   }),
 };

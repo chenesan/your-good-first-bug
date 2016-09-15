@@ -4,7 +4,7 @@
 const bugStubs = [{
   title: 'bug1',
   url: 'https://github.com/facebook/react/issues/7711',
-  timestamp: Date.now(),
+  date: 1234,
   organizer: 'facebook',
   project: 'react',
   projectUrl: 'https://github.com/facebook/react/',
@@ -13,7 +13,7 @@ const bugStubs = [{
 }, {
   title: 'bug2',
   url: 'https://github.com/pallets/flask/issues/2007',
-  timestamp: Date.now(),
+  date: 4321,
   organizer: 'pallets',
   project: 'flask',
   projectUrl: 'https://github.com/pallets/flask/',
@@ -42,7 +42,5 @@ export const data = (state = initialState, action) => {
       return state;
   }
 };
-
-export const getBugList = (state) => state.bugListIds.map(id => state.bugListById[id]);
 
 export default data;
