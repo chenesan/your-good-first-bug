@@ -34,7 +34,15 @@ const initialBugListById = initialBugListIds.reduce((bugListById, id) => {
 
 export const ADD_BUG_DATA = 'ADD_BUG_DATA';
 
-export const requestBugData = (numberOfBug) => ({
-  type: ADD_BUG_DATA,
-  bugData: initialBugListIds.slice(0, numberOfBug).map(id => initialBugListById[id]),
-});
+let bugIndex = 0;
+
+export const requestBugData = (numberOfBug) => {
+  const action = {
+    type: ADD_BUG_DATA,
+    bugData: initialBugListIds.slice(bugIndex, bugIndex + numberOfBug).map(
+      id => initialBugListById[id]
+    ),
+  };
+  bugIndex += numberOfBug;
+  return action;
+};

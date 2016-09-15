@@ -7,6 +7,7 @@ class App extends Component {
   constructor() {
     super();
     this.handleClickOnMenuButton = this.handleClickOnMenuButton.bind(this);
+    this.handleScrolling = this.handleScrolling.bind(this);
     this.state = {
       showMenu: false,
     };
@@ -25,9 +26,21 @@ class App extends Component {
       }));
     }
   }
+  handleScrolling(event) {
+    if (typeof document !== 'undefined') {
+      const { height } = document.body.getBoundingClientRect();
+      const pageY = event.pageY;
+      if (height * 0.8 < pageY) {
+        this.props.loadBugList();
+      }
+    }
+  }
   render() {
     return (
-      <main className="main-app container">
+      <main
+        className="main-app container"
+        onScroll={this.handleScrolling} onWheel={this.handleScrolling}
+      >
         <Jumbotron title="Your Good First Bug" />
         <div className="main-content">
           <Menu gridClass="col-sm-2" />
