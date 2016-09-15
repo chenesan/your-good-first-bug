@@ -1,6 +1,8 @@
 const initialState = {
-  bugList: [
-    {
+  bugListIds: [1, 2],
+  bugListById: {
+    1: {
+      id: 1,
       title: 'bug1',
       url: 'https://github.com/facebook/react/issues/7711',
       timestamp: Date.now(),
@@ -10,7 +12,8 @@ const initialState = {
       source: 'github',
       languages: ['javascript'],
     },
-    {
+    2: {
+      id: 2,
       title: 'bug2',
       url: 'https://github.com/pallets/flask/issues/2007',
       timestamp: Date.now(),
@@ -20,8 +23,7 @@ const initialState = {
       source: 'github',
       languages: ['python'],
     },
-  ],
-  bugListById: {},
+  },
 };
 
 export const data = (state = initialState, action) => {
@@ -30,5 +32,7 @@ export const data = (state = initialState, action) => {
       return state;
   }
 };
+
+export const getBugList = (state) => state.bugListIds.map(id => state.bugListById[id]);
 
 export default data;

@@ -1,8 +1,9 @@
 import { connect } from 'react-redux';
 import App from '../components/app';
+import { getBugList } from '../reducers/data';
 
 const mapStateToProps = (state) => ({
-  bugList: state.data.bugList,
+  bugList: getBugList(state.data),
 });
 
 const mapDispatchToProps = () => {};
