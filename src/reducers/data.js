@@ -1,29 +1,39 @@
+// These are temporary stub data for implementing infinite scroll
+// and data loading action.
+// Once we build the backend, we should remove them.
+const bugStubs = [{
+  title: 'bug1',
+  url: 'https://github.com/facebook/react/issues/7711',
+  timestamp: Date.now(),
+  organizer: 'facebook',
+  project: 'react',
+  projectUrl: 'https://github.com/facebook/react/',
+  source: 'github',
+  languages: ['javascript'],
+}, {
+  title: 'bug2',
+  url: 'https://github.com/pallets/flask/issues/2007',
+  timestamp: Date.now(),
+  organizer: 'pallets',
+  project: 'flask',
+  projectUrl: 'https://github.com/pallets/flask/',
+  source: 'github',
+  languages: ['python'],
+}];
+
+const initialBugListIds = Array(100).fill(undefined).map((val, index) => index + 1);
+const initialBugListById = initialBugListIds.reduce((bugListById, id) => {
+  const bug = Object.assign({}, bugStubs[id % 2], {
+    id,
+  });
+  return Object.assign(bugListById, {
+    [id]: bug,
+  });
+}, {});
+
 const initialState = {
-  bugListIds: [1, 2],
-  bugListById: {
-    1: {
-      id: 1,
-      title: 'bug1',
-      url: 'https://github.com/facebook/react/issues/7711',
-      timestamp: Date.now(),
-      organizer: 'facebook',
-      project: 'react',
-      projectUrl: 'https://github.com/facebook/react/',
-      source: 'github',
-      languages: ['javascript'],
-    },
-    2: {
-      id: 2,
-      title: 'bug2',
-      url: 'https://github.com/pallets/flask/issues/2007',
-      timestamp: Date.now(),
-      organizer: 'pallets',
-      project: 'flask',
-      projectUrl: 'https://github.com/pallets/flask/',
-      source: 'github',
-      languages: ['python'],
-    },
-  },
+  bugListIds: initialBugListIds,
+  bugListById: initialBugListById,
 };
 
 export const data = (state = initialState, action) => {
