@@ -11,6 +11,9 @@ class App extends Component {
       showMenu: false,
     };
   }
+  componentDidMount() {
+    this.props.loadBugList();
+  }
   handleClickOnMenuButton() {
     if (!this.state.showMenu) {
       this.setState(Object.assign({}, this.state, {
@@ -54,6 +57,7 @@ App.propTypes = {
     }
     return propVal;
   }),
+  loadBugList: React.PropTypes.func.isRequired,
 };
 
 export default App;
