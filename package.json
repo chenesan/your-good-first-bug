@@ -37,7 +37,8 @@
     "redux-logger": "^2.6.1",
     "run-sequence": "^1.2.2",
     "serve-favicon": "~2.3.0",
-    "webpack": "^1.13.2"
+    "webpack": "^1.13.2",
+    "xhr": "^2.2.2"
   },
   "devDependencies": {
     "babel": "^6.5.2",

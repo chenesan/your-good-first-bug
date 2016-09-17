@@ -1,15 +1,22 @@
 import { connect } from 'react-redux';
+import xhr from 'xhr';
 import App from '../components/app';
 import { getBugList } from '../reducers/';
-import { requestBugData } from '../actions';
+import { addBugData } from '../actions';
 
 const mapStateToProps = (state) => ({
   bugList: getBugList(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadBugList: (numberOfBug = 20) => {
-    dispatch(requestBugData(numberOfBug));
+  loadBugList: () => {
+    xhr.get('/api/v1/bugs', (err, resp) => {
+      if (err) {
+        throw err;
+      } else {
+        dispatch(addBugData(JSON.parse(resp.body)));
+      }
+    });
   },
 });
 
