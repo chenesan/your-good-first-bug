@@ -26,6 +26,7 @@
     "gulp-sourcemaps": "^1.6.0",
     "jade": "~1.11.0",
     "morgan": "~1.7.0",
+    "mysql": "^2.11.1",
     "postcss-reporter": "^1.4.1",
     "postcss-scss": "^0.3.0",
     "react": "^15.3.1",
