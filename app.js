@@ -21,8 +21,28 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+if (process.env.NODE_ENV === 'development') {
+  var webpack = require('webpack');
+  var WebpackDevMiddleware = require('webpack-dev-middleware');
+  var WebpackHotMiddleware = require('webpack-hot-middleware');
 
+  const config = require('./webpack.dev.config');
+
+  var compiler = webpack(config)
+  app.use(WebpackDevMiddleware(compiler, {
+    publicPath: config.output.publicPath,
+    stats: { colors: true },
+    hot: true,
+    historyApiFallback: true,
+    contentBase: './',
+  }));
+  app.use(WebpackHotMiddleware(compiler, {
+    log: console.log,
+  }));
+}
+
+app.use('/', routes);
+app.use('/public', express.static('public'));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
