@@ -43,7 +43,10 @@ class App extends Component {
       >
         <Jumbotron title="Your Good First Bug" />
         <div className="main-content">
-          <Menu gridClass="col-sm-2" />
+          <Menu
+            gridClass="col-sm-2"
+            changeLanguage={this.props.changeLanguage}
+          />
           <div className="content col-xs-12 col-sm-10">
             {
               this.props.bugList.map((bugData) => (
@@ -52,7 +55,10 @@ class App extends Component {
             }
           </div>
         </div>
-        <Menu hide={!this.state.showMenu} gridClass="col-xs-4" side />
+        <Menu
+          hide={!this.state.showMenu} gridClass="col-xs-4" side
+          changeLanguage={this.props.changeLanguage}
+        />
         <button
           className={`menu-button${this.state.showMenu ? ' -hide' : ' -side'}`}
           onClick={this.handleClickOnMenuButton}
@@ -70,6 +76,7 @@ App.propTypes = {
     }
     return propVal;
   }),
+  changeLanguage: React.PropTypes.func.isRequired,
   loadBugList: React.PropTypes.func.isRequired,
 };
 

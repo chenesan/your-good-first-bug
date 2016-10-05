@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 class Menu extends Component {
   constructor(props) {
     super(props);
+    this.changeLanguage = this.changeLanguage.bind(this);
     this.getClassName = this.getClassName.bind(this);
   }
   getClassName() {
@@ -14,6 +15,10 @@ class Menu extends Component {
       classList.push('-hide');
     }
     return classList.join(' ');
+  }
+  changeLanguage(event) {
+    const language = event.currentTarget.value;
+    this.props.changeLanguage(language);
   }
   render() {
     const className = this.getClassName();
@@ -40,10 +45,10 @@ class Menu extends Component {
         <h4 className="title">Filter:</h4>
         <div className="selection">
           <h5 className="name">Language:</h5>
-          <select name="condition" className="options">
+          <select name="condition" className="options" onChange={this.changeLanguage}>
             <option value="all">all</option>
-            <option value="python">python</option>
-            <option value="javascript">javascript</option>
+            <option value="Python">Python</option>
+            <option value="JavaScript">JavaScript</option>
           </select>
         </div>
         <div className="selection">
@@ -64,6 +69,7 @@ Menu.propTypes = {
   side: React.PropTypes.bool.isRequired,
   gridClass: React.PropTypes.string.isRequired,
   hide: React.PropTypes.bool.isRequired,
+  changeLanguage: React.PropTypes.func.isRequired,
 };
 
 export default Menu;

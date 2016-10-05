@@ -1,4 +1,4 @@
-import { ADD_BUG_DATA } from '../actions/';
+import { ADD_BUG_DATA, CLEAN_AND_ADD_BUG_DATA } from '../actions/';
 
 const initialState = {
   bugListIds: [],
@@ -32,11 +32,17 @@ const addBugData = (state, action) => {
   return nextState;
 };
 
+const cleanState = () => Object.assign({}, initialState);
+
 export const data = (state = initialState, action) => {
   switch (action.type) {
     case ADD_BUG_DATA: {
       const nextState = addBugData(state, action);
       return nextState;
+    }
+    case CLEAN_AND_ADD_BUG_DATA: {
+      const nextState = cleanState();
+      return addBugData(nextState, action);
     }
     default:
       return state;
