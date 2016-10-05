@@ -1,52 +1,100 @@
-import mysql from 'mysql';
+const models = require('./models');
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-});
-
-const BUG_TABLE = process.env.BUG_TABLE;
-const LANGUAGE_TABLE = process.env.LANGUAGE_TABLE;
-const PROJECT_TABLE = process.env.PROJECT_TABLE;
-const BUG_LANGUAGE_TABLE = process.env.BUG_LANGUAGE_TABLE;
-
-connection.connect();
-
-const mapFieldToArrayField = (result, fromField, toField) => {
-  const resultById = result.reduce((prevIdMap, val) => {
-    const idMap = prevIdMap;
-    if (idMap[val.id]) {
-      idMap[toField].push(val[fromField]);
-    } else {
-      idMap[val.id] = val;
-      idMap[val.id][toField] = [val[fromField]];
-      delete idMap[val.id][fromField];
+function buildCreatedAtQuery(qs) {
+  if (!qs) {
+    return undefined;
+  } else {
+    const operator = qs[0];
+    const dateString = qs.slice(1);
+    let date;
+    try {
+      date = new Date(dateString);
     }
-    return idMap;
-  }, {});
-  return Object.keys(resultById).map((key) => resultById[key]);
-};
+    catch (err) {
+      console.error('Fail to parse date. Not to create createdAt query.');
+      return undefined;
+    }
+    if (operator === '>') {
+      return {
+        $gt: date,
+      };
+    } else if (operator === '<') {
+      return {
+        $lt: date,
+      };
+    } else {
+      console.error('Fail to parse operator, Not to create createdAt query.');
+      return undefined;
+    }
+  }
+}
 
-export const getBugs = () => {
-  const sql = `select b.*, p.name as project, l.name as language from ${BUG_LANGUAGE_TABLE} ` +
-  `inner join ${BUG_TABLE} b on b.id = ${BUG_LANGUAGE_TABLE}.bug_id ` +
-  `inner join ${LANGUAGE_TABLE} l on l.id = ${BUG_LANGUAGE_TABLE}.language_id ` +
-  `inner join ${PROJECT_TABLE} p on b.project_id = p.id;`;
-  const promise = new Promise((resolve, reject) => {
-    connection.query(sql, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        const resultWithLangs = mapFieldToArrayField(result, 'language', 'languages');
-        resolve(resultWithLangs);
-      }
-    });
+function buildPaginatedQuery(query, page, limit) {
+  return Object.assign(query, {
+    limit,
+    offset: (page - 1) * limit,
   });
-  return promise;
-};
+}
 
-export default {
-  getBugs,
+function buildQuery(rawQuery) {
+  const queryBuilders = {
+    language: (q, language) => {
+      const newQuery = Object.assign({}, q);
+      newQuery.include.push({
+        model: models.Project,
+        attributes: ['name'],
+        include: [{
+          model: models.Language,
+          where: { name: language },
+          attributes: ['name'],
+        }],
+      });
+      return newQuery;
+    },
+    createdAt: (q, createdAt) => {
+      const newQuery = Object.assign({}, q);
+      newQuery.where.createdAt = buildCreatedAtQuery(createdAt);
+      return newQuery;
+    },
+  };
+  const query = {
+    include: [
+      {
+        model: models.Project,
+        attributes: ['name', 'url'],
+        include: [{
+          model: models.Language,
+          attributes: ['name'],
+        }],
+      },
+    ],
+    where: {},
+  };
+  return Object.keys(queryBuilders).reduce((newQuery, option) => {
+    if (rawQuery[option] !== undefined) {
+      return queryBuilders[option](query, rawQuery[option]);
+    } else {
+      return query;
+    }
+  }, query);
+}
+
+function queryIssues(rawQuery, page = 1, limit = 100) {
+  const query = buildQuery(rawQuery);
+  const paginatedQuery = buildPaginatedQuery(query, page, limit);
+  console.log(paginatedQuery);
+  return models.Issue.findAll(paginatedQuery)
+  .then(
+    (issues) => {
+      return issues;
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
+}
+
+
+module.exports = {
+  queryIssues,
 };
