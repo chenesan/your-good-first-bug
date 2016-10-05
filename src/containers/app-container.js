@@ -14,7 +14,8 @@ const mapDispatchToProps = (dispatch) => ({
       if (err) {
         throw err;
       } else {
-        dispatch(addBugData(JSON.parse(resp.body)));
+        const data = JSON.parse(resp.body);
+        dispatch(addBugData(data));
       }
     });
   },

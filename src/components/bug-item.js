@@ -6,8 +6,6 @@ class BugItem extends Component {
       <article className="bug-item col-xs-12 col-sm-5">
         <h3 className="title">{this.props.bugData.title}</h3>
         <footer className="metadata">
-          <span className="organizer">{this.props.bugData.organizer}</span>
-          /
           <span className="project">{this.props.bugData.project}</span>
           <div className="languages">
           {
@@ -31,7 +29,6 @@ BugItem.propTypes = {
   bugData: React.PropTypes.shape({
     languages: React.PropTypes.arrayOf(() => true),
     title: React.PropTypes.string.isRequired,
-    organizer: React.PropTypes.string.isRequired,
     project: React.PropTypes.string.isRequired,
     projectUrl: React.PropTypes.string.isRequired,
     date: React.PropTypes.instanceOf(Date),

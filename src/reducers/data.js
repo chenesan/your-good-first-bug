@@ -5,13 +5,26 @@ const initialState = {
   bugListById: {},
 };
 
+const buildBug = (rawBug) => (
+  {
+    title: rawBug.title,
+    languages: [rawBug.project.language.name],
+    project: rawBug.project.name,
+    projectUrl: rawBug.project.url,
+    url: rawBug.url,
+    date: rawBug.createdAt,
+    id: rawBug.id,
+  }
+);
+
 const addBugData = (state, action) => {
   const bugData = action.bugData;
   const nextState = Object.assign({}, state);
-  bugData.forEach((data) => {
-    if (!state.bugListById[data.id]) {
-      nextState.bugListById[data.id] = data;
-      nextState.bugListIds.push(data.id);
+  bugData.forEach((rawBug) => {
+    const bug = buildBug(rawBug);
+    if (!state.bugListById[bug.id]) {
+      nextState.bugListById[bug.id] = bug;
+      nextState.bugListIds.push(bug.id);
     } else {
       return;
     }
