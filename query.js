@@ -40,15 +40,31 @@ function buildQuery(rawQuery) {
   const queryBuilders = {
     language: (q, language) => {
       const newQuery = Object.assign({}, q);
-      newQuery.include.push({
-        model: models.Project,
+      const includedLanguage = {
+        model: models.Language,
+        where: { name: language },
         attributes: ['name'],
-        include: [{
-          model: models.Language,
-          where: { name: language },
+      };
+      let hasIncludedProject = false;
+      const includeLength = newQuery.include.length;
+      for (let i = 0; i < includeLength; i++) {
+        const includedModel = newQuery.include[i];
+        if (includedModel.model === models.Project) {
+          hasIncludedProject = true;
+          if (includedModel.include !== undefined) {
+            newQuery.include[i].include.push(includedLanguage);
+          } else {
+            newQuery.include[i].include = [includedLanguage];
+          }
+        }
+      }
+      if (!hasIncludedProject) {
+        newQuery.include.push({
+          model: models.Project,
           attributes: ['name'],
-        }],
-      });
+          include: [includedLanguage],
+        });
+      }
       return newQuery;
     },
     createdAt: (q, createdAt) => {
@@ -62,10 +78,6 @@ function buildQuery(rawQuery) {
       {
         model: models.Project,
         attributes: ['name', 'url'],
-        include: [{
-          model: models.Language,
-          attributes: ['name'],
-        }],
       },
     ],
     where: {},
@@ -82,7 +94,7 @@ function buildQuery(rawQuery) {
 function queryIssues(rawQuery, page = 1, limit = 100) {
   const query = buildQuery(rawQuery);
   const paginatedQuery = buildPaginatedQuery(query, page, limit);
-  console.log(paginatedQuery);
+  console.log(paginatedQuery.include[0]);
   return models.Issue.findAll(paginatedQuery)
   .then(
     (issues) => {
