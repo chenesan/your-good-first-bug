@@ -1,4 +1,4 @@
-import { ADD_BUG_DATA, CLEAN_AND_ADD_BUG_DATA } from '../actions/';
+import { CLEAN_BUG_DATA, FETCH_ISSUES_SUCCESS } from '../actions/';
 
 const initialState = {
   bugListIds: [],
@@ -23,8 +23,10 @@ const addBugData = (state, action) => {
   bugData.forEach((rawBug) => {
     const bug = buildBug(rawBug);
     if (!state.bugListById[bug.id]) {
-      nextState.bugListById[bug.id] = bug;
-      nextState.bugListIds.push(bug.id);
+      nextState.bugListById = Object.assign({}, nextState.bugListById, {
+        [bug.id]: bug,
+      });
+      nextState.bugListIds = nextState.bugListIds.concat([bug.id]);
     } else {
       return;
     }
@@ -36,13 +38,13 @@ const cleanState = () => Object.assign({}, initialState);
 
 export const data = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_BUG_DATA: {
+    case FETCH_ISSUES_SUCCESS: {
       const nextState = addBugData(state, action);
       return nextState;
     }
-    case CLEAN_AND_ADD_BUG_DATA: {
+    case CLEAN_BUG_DATA: {
       const nextState = cleanState();
-      return addBugData(nextState, action);
+      return nextState;
     }
     default:
       return state;

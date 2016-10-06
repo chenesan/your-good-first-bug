@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
 import { data } from './data';
 import { ui } from './ui';
+import { issueFilter } from './issue-filter';
 
 const reducer = combineReducers({
   data,
   ui,
+  issueFilter,
 });
 
 export const getBugList = (state) => {
