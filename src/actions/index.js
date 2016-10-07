@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { isFetching } from '../reducers/data';
 
 export const CLEAN_ISSUE_DATA = 'CLEAN_ISSUE_DATA';
 export const FETCH_ISSUES_REQUEST = 'FETCH_ISSUES_REQUEST';
@@ -46,18 +47,22 @@ const buildIssuesRequest = (filter) => {
 
 export const fetchIssues = () => (dispatch, getState) => {
   const state = getState();
-  const request = buildIssuesRequest(state.issueFilter);
-  dispatch(fetchIssuesRequest());
-  request.then(
-    (response) => {
-      const issueData = response.data;
-      dispatch(fetchIssuesSuccess(issueData));
-    },
-    (err) => {
-      console.error(err);
-      dispatch(fetchIssuesFailure());
-    }
-  ).catch(
-    (err) => { console.error(err); }
-  );
+  if (isFetching(state.data)) {
+    return;
+  } else {
+    const request = buildIssuesRequest(state.issueFilter);
+    dispatch(fetchIssuesRequest());
+    request.then(
+      (response) => {
+        const issueData = response.data;
+        dispatch(fetchIssuesSuccess(issueData));
+      },
+      (err) => {
+        console.error(err);
+        dispatch(fetchIssuesFailure());
+      }
+    ).catch(
+      (err) => { console.error(err); }
+    );
+  }
 };

@@ -1,8 +1,18 @@
-import { CLEAN_ISSUE_DATA, FETCH_ISSUES_SUCCESS } from '../actions/';
+import { CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST, FETCH_ISSUES_SUCCESS } from '../actions/';
 
 const initialState = {
   issueListIds: [],
   issueListById: {},
+  status: {
+    fetching: false,
+  },
+};
+
+const changeStatus = (status, option) => {
+  const updatedStatus = {
+    fetching: option.fetching !== undefined ? option.fetching : status.fetching,
+  };
+  return Object.assign({}, status, updatedStatus);
 };
 
 const buildIssue = (rawIssue) => (
@@ -38,8 +48,19 @@ const cleanState = () => Object.assign({}, initialState);
 
 export const data = (state = initialState, action) => {
   switch (action.type) {
+    case FETCH_ISSUES_REQUEST: {
+      const nextStatus = changeStatus(state.status, { fetching: true });
+      const nextState = Object.assign({}, state, {
+        status: nextStatus,
+      });
+      return nextState;
+    }
     case FETCH_ISSUES_SUCCESS: {
-      const nextState = addIssueData(state, action);
+      const nextStatus = changeStatus(state.status, { fetching: false });
+      const nextState = Object.assign(
+        addIssueData(state, action),
+        { status: nextStatus }
+      );
       return nextState;
     }
     case CLEAN_ISSUE_DATA: {
@@ -50,5 +71,9 @@ export const data = (state = initialState, action) => {
       return state;
   }
 };
+
+// selector
+
+export const isFetching = (state) => state.status.fetching;
 
 export default data;
