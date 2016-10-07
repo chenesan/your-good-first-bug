@@ -52,7 +52,11 @@ function buildQuery(rawQuery) {
         if (includedModel.model === models.Project) {
           hasIncludedProject = true;
           if (includedModel.include !== undefined) {
-            newQuery.include[i].include.push(includedLanguage);
+            for (const j in includedModel.include) {
+              if (includedModel.include[j].model === models.Language) {
+                includedModel.include[j] = includedLanguage;
+              }
+            }
           } else {
             newQuery.include[i].include = [includedLanguage];
           }
@@ -78,6 +82,12 @@ function buildQuery(rawQuery) {
       {
         model: models.Project,
         attributes: ['name', 'url'],
+        include: [
+          {
+            model: models.Language,
+            attributes: ['name'],
+          },
+        ],
       },
     ],
     where: {},
