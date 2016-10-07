@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import BugItem from './bug-item';
+import IssueItem from './issue-item';
 import Jumbotron from './jumbotron';
 import Menu from './menu';
 
@@ -13,7 +13,7 @@ class App extends Component {
     };
   }
   componentDidMount() {
-    this.props.loadBugList();
+    this.props.loadIssueList();
   }
   handleClickOnMenuButton() {
     if (!this.state.showMenu) {
@@ -31,7 +31,7 @@ class App extends Component {
       const { height } = document.body.getBoundingClientRect();
       const pageY = event.pageY;
       if (height * 0.8 < pageY) {
-        this.props.loadBugList();
+        this.props.loadIssueList();
       }
     }
   }
@@ -49,8 +49,8 @@ class App extends Component {
           />
           <div className="content col-xs-12 col-sm-10">
             {
-              this.props.bugList.map((bugData) => (
-                <BugItem bugData={bugData} />
+              this.props.issueList.map((issueData) => (
+                <IssueItem issueData={issueData} />
               ))
             }
           </div>
@@ -69,15 +69,15 @@ class App extends Component {
 }
 
 App.propTypes = {
-  bugList: React.PropTypes.arrayOf((propVal, key) => {
+  issueList: React.PropTypes.arrayOf((propVal, key) => {
     // todo: validator
     if (!propVal.title) {
-      return new Error(`Bug lack of title: ${propVal} with key ${key}`);
+      return new Error(`Issue lack of title: ${propVal} with key ${key}`);
     }
     return propVal;
   }),
   changeLanguage: React.PropTypes.func.isRequired,
-  loadBugList: React.PropTypes.func.isRequired,
+  loadIssueList: React.PropTypes.func.isRequired,
 };
 
 export default App;

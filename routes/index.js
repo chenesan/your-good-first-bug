@@ -5,7 +5,7 @@ var v1Router = express.Router();
 import { queryIssues } from '../query';
 
 
-v1Router.route('/bugs')
+v1Router.route('/issues')
 .get((req, res) => {
   const queryPromise = queryIssues(req.query);
   queryPromise.then(

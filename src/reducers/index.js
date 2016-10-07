@@ -9,10 +9,10 @@ const reducer = combineReducers({
   issueFilter,
 });
 
-export const getBugList = (state) => {
-  const bugInstanceList = state.data.bugListIds.map(id => state.data.bugListById[id]);
+export const getIssueList = (state) => {
+  const issueInstanceList = state.data.issueListIds.map(id => state.data.issueListById[id]);
   const sorter = state.ui.sorter;
-  return bugInstanceList.sort((a, b) => {
+  return issueInstanceList.sort((a, b) => {
     const itemA = a[sorter.sortBy];
     const itemB = b[sorter.sortBy];
     if (sorter.sortOrder === 'descendant') {

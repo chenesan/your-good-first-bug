@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-export const ADD_BUG_DATA = 'ADD_BUG_DATA';
-export const CLEAN_BUG_DATA = 'CLEAN_BUG_DATA';
+export const CLEAN_ISSUE_DATA = 'CLEAN_ISSUE_DATA';
 export const FETCH_ISSUES_REQUEST = 'FETCH_ISSUES_REQUEST';
 export const FETCH_ISSUES_SUCCESS = 'FETCH_ISSUES_SUCCESS';
 export const FETCH_ISSUES_FAILURE = 'FETCH_ISSUES_FAILURE';
@@ -15,14 +14,14 @@ export const changeFilter = (option) => {
   return action;
 };
 
-export const cleanBugData = () => ({
-  type: CLEAN_BUG_DATA,
+export const cleanIssueData = () => ({
+  type: CLEAN_ISSUE_DATA,
 });
 
-export const fetchIssuesSuccess = (bugData) => {
+export const fetchIssuesSuccess = (issueData) => {
   const action = {
     type: FETCH_ISSUES_SUCCESS,
-    bugData,
+    issueData,
   };
   return action;
 };
@@ -42,7 +41,7 @@ const buildIssuesRequest = (filter) => {
   if (filter.language !== 'all') {
     config.params.language = filter.language;
   }
-  return axios.get('/api/v1/bugs', config);
+  return axios.get('/api/v1/issues', config);
 };
 
 export const fetchIssues = () => (dispatch, getState) => {

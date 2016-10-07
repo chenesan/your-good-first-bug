@@ -1,32 +1,32 @@
 import React, { Component } from 'react';
 
-class BugItem extends Component {
+class IssueItem extends Component {
   render() {
     return (
-      <article className="bug-item col-xs-12 col-sm-5">
-        <h3 className="title">{this.props.bugData.title}</h3>
+      <article className="issue-item col-xs-12 col-sm-5">
+        <h3 className="title">{this.props.issueData.title}</h3>
         <footer className="metadata">
-          <span className="project">{this.props.bugData.project}</span>
+          <span className="project">{this.props.issueData.project}</span>
           <div className="languages">
           {
-            this.props.bugData.languages.map(
+            this.props.issueData.languages.map(
               (language) => <span className="language">{language}</span>
             )
           }
           </div>
           <address className="sources">
-            <a href={this.props.bugData.url} className="issue">Issue source</a>
-            <a href={this.props.bugData.projectUrl} className="project">project source</a>
+            <a href={this.props.issueData.url} className="issue">Issue source</a>
+            <a href={this.props.issueData.projectUrl} className="project">project source</a>
           </address>
-          <time className="date">{this.props.bugData.date}</time>
+          <time className="date">{this.props.issueData.date}</time>
         </footer>
       </article>
     );
   }
 }
 
-BugItem.propTypes = {
-  bugData: React.PropTypes.shape({
+IssueItem.propTypes = {
+  issueData: React.PropTypes.shape({
     languages: React.PropTypes.arrayOf(() => true),
     title: React.PropTypes.string.isRequired,
     project: React.PropTypes.string.isRequired,
@@ -36,4 +36,4 @@ BugItem.propTypes = {
   }),
 };
 
-export default BugItem;
+export default IssueItem;
