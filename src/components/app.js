@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import IssueItem from './issue-item';
 import Jumbotron from './jumbotron';
+import LoadingTip from './loading-tip';
 import Menu from './menu';
 
 class App extends Component {
@@ -41,6 +42,9 @@ class App extends Component {
         className="main-app container"
         onScroll={this.handleScrolling} onWheel={this.handleScrolling}
       >
+        {
+          this.props.fetching ? <LoadingTip /> : false
+        }
         <Jumbotron title="Your Good First Bug" />
         <div className="main-content">
           <Menu
@@ -69,6 +73,7 @@ class App extends Component {
 }
 
 App.propTypes = {
+  fetching: React.PropTypes.bool.isRequired,
   issueList: React.PropTypes.arrayOf((propVal, key) => {
     // todo: validator
     if (!propVal.title) {
