@@ -1,4 +1,5 @@
-import { CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST, FETCH_ISSUES_SUCCESS } from '../actions/';
+import { CHANGE_ISSUES_FILTER, CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST,
+  FETCH_ISSUES_SUCCESS } from '../actions/';
 
 const initialState = {
   issueListIds: [],
@@ -74,6 +75,11 @@ export const data = (state = initialState, action) => {
     }
     case CLEAN_ISSUE_DATA: {
       const nextState = cleanState();
+      return nextState;
+    }
+    case CHANGE_ISSUES_FILTER: {
+      const nextStatus = changeStatus(state.status, { next: initialState.status.link.next });
+      const nextState = Object.assign({}, state, { status: nextStatus });
       return nextState;
     }
     default:
