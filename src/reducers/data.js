@@ -5,12 +5,16 @@ const initialState = {
   issueListById: {},
   status: {
     fetching: false,
+    link: {
+      next: '/api/v1/issues',
+    },
   },
 };
 
 const changeStatus = (status, option) => {
   const updatedStatus = {
     fetching: option.fetching !== undefined ? option.fetching : status.fetching,
+    link: { next: option.next },
   };
   return Object.assign({}, status, updatedStatus);
 };
@@ -28,7 +32,7 @@ const buildIssue = (rawIssue) => (
 );
 
 const addIssueData = (state, action) => {
-  const issueData = action.issueData;
+  const issueData = action.data;
   const nextState = Object.assign({}, state);
   issueData.forEach((rawIssue) => {
     const issue = buildIssue(rawIssue);
@@ -49,14 +53,19 @@ const cleanState = () => Object.assign({}, initialState);
 export const data = (state = initialState, action) => {
   switch (action.type) {
     case FETCH_ISSUES_REQUEST: {
-      const nextStatus = changeStatus(state.status, { fetching: true });
+      const nextStatus = changeStatus(state.status, {
+        fetching: true,
+        link: {
+          next: action.next,
+        },
+      });
       const nextState = Object.assign({}, state, {
         status: nextStatus,
       });
       return nextState;
     }
     case FETCH_ISSUES_SUCCESS: {
-      const nextStatus = changeStatus(state.status, { fetching: false });
+      const nextStatus = changeStatus(state.status, { fetching: false, next: action.next });
       const nextState = Object.assign(
         addIssueData(state, action),
         { status: nextStatus }
@@ -75,5 +84,6 @@ export const data = (state = initialState, action) => {
 // selector
 
 export const isFetching = (state) => state.status.fetching;
+export const getNextLink = (state) => state.status.link.next;
 
 export default data;
