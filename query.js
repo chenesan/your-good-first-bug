@@ -104,14 +104,21 @@ function buildQuery(rawQuery) {
 function queryIssues(rawQuery, page = 1, limit = 100) {
   const query = buildQuery(rawQuery);
   const paginatedQuery = buildPaginatedQuery(query, page, limit);
-  console.log(paginatedQuery.include[0]);
-  return models.Issue.findAll(paginatedQuery)
+  return models.Issue.findAndCountAll(paginatedQuery)
+  .catch((err) => { throw err; })
   .then(
-    (issues) => {
-      return issues;
-    },
-    (err) => {
-      console.error(err);
+    (issuesAndCount) => {
+      const data = issuesAndCount.rows;
+      const dataTotal = issuesAndCount.count;
+      const pageTotal = Math.floor(dataTotal / 100) + (dataTotal % 100 === 0 ? 0 : 1);
+      if (pageTotal < page) {
+        throw Error(`Page ${page} larger than total page: ${pageTotal}`);
+      }
+      return {
+        pageTotal,
+        dataTotal,
+        data,
+      };
     }
   );
 }
