@@ -81,7 +81,7 @@ function buildQuery(rawQuery) {
     include: [
       {
         model: models.Project,
-        attributes: ['name', 'url'],
+        attributes: ['name', 'url', 'description', 'size'],
         include: [
           {
             model: models.Language,

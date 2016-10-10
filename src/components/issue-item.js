@@ -6,7 +6,8 @@ class IssueItem extends Component {
       <article className="issue-item col-xs-12 col-sm-5">
         <h3 className="title">{this.props.issueData.title}</h3>
         <footer className="metadata">
-          <span className="project">{this.props.issueData.project}</span>
+          <span className="project">{this.props.issueData.project.name}</span>
+          <div className="projectDescription">{this.props.issueData.project.description}</div>
           <div className="languages">
           {
             this.props.issueData.languages.map(
@@ -16,7 +17,7 @@ class IssueItem extends Component {
           </div>
           <address className="sources">
             <a href={this.props.issueData.url} className="issue">Issue source</a>
-            <a href={this.props.issueData.projectUrl} className="project">project source</a>
+            <a href={this.props.issueData.project.url} className="project">project source</a>
           </address>
           <time className="date">{this.props.issueData.date}</time>
         </footer>
@@ -29,8 +30,11 @@ IssueItem.propTypes = {
   issueData: React.PropTypes.shape({
     languages: React.PropTypes.arrayOf(() => true),
     title: React.PropTypes.string.isRequired,
-    project: React.PropTypes.string.isRequired,
-    projectUrl: React.PropTypes.string.isRequired,
+    project: React.PropTypes.shape({
+      name: React.PropTypes.string.isRequired,
+      url: React.PropTypes.string.isRequired,
+      description: React.PropTypes.string.isRequired,
+    }),
     date: React.PropTypes.instanceOf(Date),
     url: React.PropTypes.string.isRequired,
   }),

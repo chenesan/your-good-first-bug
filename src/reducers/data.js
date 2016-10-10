@@ -24,8 +24,12 @@ const buildIssue = (rawIssue) => (
   {
     title: rawIssue.title,
     languages: [rawIssue.project.language.name],
-    project: rawIssue.project.name,
-    projectUrl: rawIssue.project.url,
+    project: {
+      name: rawIssue.project.name,
+      url: rawIssue.project.url,
+      description: rawIssue.project.description,
+      size: rawIssue.project.size,
+    },
     url: rawIssue.url,
     date: rawIssue.createdAt,
     id: rawIssue.id,
