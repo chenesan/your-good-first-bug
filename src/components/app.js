@@ -49,7 +49,8 @@ class App extends Component {
         <div className="main-content">
           <Menu
             gridClass="col-sm-2"
-            changeLanguage={this.props.changeLanguage}
+            selectors={this.props.selectors}
+            selectorChangeHandler={this.props.selectorChangeHandler}
           />
           <div className="content col-xs-12 col-sm-10">
             {
@@ -61,7 +62,8 @@ class App extends Component {
         </div>
         <Menu
           hide={!this.state.showMenu} gridClass="col-xs-4" side
-          changeLanguage={this.props.changeLanguage}
+          selectors={this.props.selectors}
+          selectorChangeHandler={this.props.selectorChangeHandler}
         />
         <button
           className={`menu-button${this.state.showMenu ? ' -hide' : ' -side'}`}
@@ -81,7 +83,8 @@ App.propTypes = {
     }
     return propVal;
   }),
-  changeLanguage: React.PropTypes.func.isRequired,
+  selectors: React.PropTypes.object.isRequired,
+  selectorChangeHandler: React.PropTypes.func.isRequired,
   loadIssueList: React.PropTypes.func.isRequired,
 };
 

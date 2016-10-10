@@ -1,4 +1,4 @@
-import { CHANGE_ISSUES_FILTER, CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST,
+import { CHANGE_ISSUES_SELECTOR, CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST,
   FETCH_ISSUES_SUCCESS } from '../actions/';
 
 const initialState = {
@@ -81,7 +81,7 @@ export const data = (state = initialState, action) => {
       const nextState = cleanState();
       return nextState;
     }
-    case CHANGE_ISSUES_FILTER: {
+    case CHANGE_ISSUES_SELECTOR: {
       const nextStatus = changeStatus(state.status, { next: initialState.status.link.next });
       const nextState = Object.assign({}, state, { status: nextStatus });
       return nextState;

@@ -1,26 +1,16 @@
 import { combineReducers } from 'redux';
 import { data } from './data';
 import { ui } from './ui';
-import { issueFilter } from './issue-filter';
+import { issueSelectors } from './issue-selectors';
 
 const reducer = combineReducers({
   data,
   ui,
-  issueFilter,
+  issueSelectors,
 });
 
-export const getIssueList = (state) => {
-  const issueInstanceList = state.data.issueListIds.map(id => state.data.issueListById[id]);
-  const sorter = state.ui.sorter;
-  return issueInstanceList.sort((a, b) => {
-    const itemA = a[sorter.sortBy];
-    const itemB = b[sorter.sortBy];
-    if (sorter.sortOrder === 'descendant') {
-      return itemB - itemA;
-    } else {
-      return itemA - itemB;
-    }
-  });
-};
+export const getIssueList = (state) => state.data.issueListIds.map(
+  id => state.data.issueListById[id]
+);
 
 export default reducer;

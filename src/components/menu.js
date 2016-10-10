@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import SubSelectors from './sub-selectors';
 
 class Menu extends Component {
   constructor(props) {
     super(props);
-    this.changeLanguage = this.changeLanguage.bind(this);
+    this.selectorChangeHandler = this.selectorChangeHandler.bind(this);
     this.getClassName = this.getClassName.bind(this);
   }
   getClassName() {
@@ -16,51 +17,28 @@ class Menu extends Component {
     }
     return classList.join(' ');
   }
-  changeLanguage(event) {
-    const language = event.currentTarget.value;
-    this.props.changeLanguage(language);
+  selectorChangeHandler(change) {
+    const key = Object.keys(change)[0];
+    const wrappedChange = {
+      filter: {
+        [key]: {
+          value: change[key],
+        },
+      },
+    };
+    this.props.selectorChangeHandler(wrappedChange);
   }
   render() {
     const className = this.getClassName();
     return (<aside className={className}>
-      <div className="sortBy">
-        <h4 className="title">Sorting by:</h4>
-        <div className="selection">
-          <h5 className="name">Condition:</h5>
-          <select name="condition" className="options">
-            <option value="date">date</option>
-            <option value="project size">project size</option>
-            <option value="popularity">popularity</option>
-          </select>
-        </div>
-        <div className="selection">
-          <h5 className="name">Order:</h5>
-          <select name="order" className="options">
-            <option value="descendant">descendant</option>
-            <option value="ascendant">ascendant</option>
-          </select>
-        </div>
-      </div>
-      <div className="filter">
-        <h4 className="title">Filter:</h4>
-        <div className="selection">
-          <h5 className="name">Language:</h5>
-          <select name="condition" className="options" onChange={this.changeLanguage}>
-            <option value="all">all</option>
-            <option value="Python">Python</option>
-            <option value="JavaScript">JavaScript</option>
-          </select>
-        </div>
-        <div className="selection">
-          <h5 className="name">Code base size:</h5>
-          <select name="condition" className="options">
-            <option value="all">all</option>
-            <option value="< 1k lines">{"< 1k lines"}</option>
-            <option value="1k ~ 10k lines">1k ~ 10k lines</option>
-            <option value="> 10k lines">{"> 10k lines"}</option>
-          </select>
-        </div>
-      </div>
+      <SubSelectors
+        name="sortBy" selectors={this.props.selectors.sorter}
+        selectorChangeHandler={this.selectorChangeHandler}
+      />
+      <SubSelectors
+        name="filter" selectors={this.props.selectors.filter}
+        selectorChangeHandler={this.selectorChangeHandler}
+      />
     </aside>);
   }
 }
@@ -69,7 +47,11 @@ Menu.propTypes = {
   side: React.PropTypes.bool.isRequired,
   gridClass: React.PropTypes.string.isRequired,
   hide: React.PropTypes.bool.isRequired,
-  changeLanguage: React.PropTypes.func.isRequired,
+  selectorChangeHandler: React.PropTypes.func.isRequired,
+  selectors: React.PropTypes.shape({
+    sorter: React.PropTypes.object.isRequired,
+    filter: React.PropTypes.object.isRequired,
+  }).isRequired,
 };
 
 export default Menu;

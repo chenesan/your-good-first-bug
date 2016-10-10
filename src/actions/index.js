@@ -16,12 +16,12 @@ export const CLEAN_ISSUE_DATA = 'CLEAN_ISSUE_DATA';
 export const FETCH_ISSUES_REQUEST = 'FETCH_ISSUES_REQUEST';
 export const FETCH_ISSUES_SUCCESS = 'FETCH_ISSUES_SUCCESS';
 export const FETCH_ISSUES_FAILURE = 'FETCH_ISSUES_FAILURE';
-export const CHANGE_ISSUES_FILTER = 'CHANGE_ISSUES_FILTER';
+export const CHANGE_ISSUES_SELECTORS = 'CHANGE_ISSUES_SELECTORS';
 
-export const changeFilter = (option) => {
+export const changeSelectors = (changes) => {
   const action = {
-    type: CHANGE_ISSUES_FILTER,
-    option,
+    type: CHANGE_ISSUES_SELECTORS,
+    changes,
   };
   return action;
 };
@@ -47,13 +47,18 @@ export const fetchIssuesFailure = () => ({
   type: FETCH_ISSUES_FAILURE,
 });
 
-const buildIssuesRequest = (filter, url) => {
+const buildIssuesRequest = (selectors, url) => {
   const config = {
     params: {},
   };
-  if (filter.language !== 'all') {
-    config.params.language = filter.language;
+  if (selectors.filter.language.value !== 'all') {
+    config.params.language = selectors.filter.language.value;
   }
+  if (selectors.filter.projectSize.value !== 'all') {
+    config.params.projectSize = selectors.filter.projectSize.value;
+  }
+  config.params.sortBy = selectors.sorter.sortBy;
+  config.params.order = selectors.sorter.order;
   return axios.get(url, config);
 };
 
@@ -63,7 +68,7 @@ export const fetchIssues = () => (dispatch, getState) => {
   if (isFetching(state.data) || !nextLink) {
     return;
   } else {
-    const request = buildIssuesRequest(state.issueFilter, nextLink);
+    const request = buildIssuesRequest(state.issueSelectors, nextLink);
     dispatch(fetchIssuesRequest());
     request.then(
       (response) => {

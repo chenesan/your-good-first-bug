@@ -2,19 +2,21 @@ import { connect } from 'react-redux';
 import App from '../components/app';
 import { getIssueList } from '../reducers/';
 import { isFetching } from '../reducers/data';
-import { changeFilter, cleanIssueData, fetchIssues } from '../actions';
+import { getSelectors } from '../reducers/issue-selectors';
+import { changeSelectors, cleanIssueData, fetchIssues } from '../actions';
 
 const mapStateToProps = (state) => ({
   issueList: getIssueList(state),
   fetching: isFetching(state.data),
+  selectors: getSelectors(state.issueSelectors),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   loadIssueList: () => {
     dispatch(fetchIssues());
   },
-  changeLanguage: (language) => {
-    dispatch(changeFilter({ language }));
+  selectorChangeHandler: (changes) => {
+    dispatch(changeSelectors(changes));
     dispatch(cleanIssueData());
     dispatch(fetchIssues());
   },
