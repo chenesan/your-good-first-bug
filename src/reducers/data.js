@@ -1,13 +1,16 @@
 import { CHANGE_ISSUES_SELECTOR, CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST,
   FETCH_ISSUES_SUCCESS } from '../actions/';
 
+export const NO_NEXT_LINK = 'NO_NEXT_LINK';
+
 const initialState = {
   issueListIds: [],
   issueListById: {},
   status: {
     fetching: false,
     link: {
-      next: '/api/v1/issues',
+      root: '/api/v1/issues',
+      next: NO_NEXT_LINK,
     },
   },
 };
@@ -15,7 +18,7 @@ const initialState = {
 const changeStatus = (status, option) => {
   const updatedStatus = {
     fetching: option.fetching !== undefined ? option.fetching : status.fetching,
-    link: { next: option.next },
+    link: Object.assign({}, status.link, { next: option.next ? option.next : NO_NEXT_LINK }),
   };
   return Object.assign({}, status, updatedStatus);
 };
@@ -94,6 +97,9 @@ export const data = (state = initialState, action) => {
 // selector
 
 export const isFetching = (state) => state.status.fetching;
-export const getNextLink = (state) => state.status.link.next;
+export const getNextLink = (state) => (
+  state.status.link.next === NO_NEXT_LINK ? null : state.status.link.next
+);
+export const getRootUrl = (state) => state.status.link.root;
 
 export default data;

@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { getNextLink, isFetching } from '../reducers/data';
+import { buildIssuesRequest } from '../reducers';
+import { isFetching } from '../reducers/data';
 
 function getDataFromLinkHeader(link) {
   const data = {};
@@ -47,28 +48,14 @@ export const fetchIssuesFailure = () => ({
   type: FETCH_ISSUES_FAILURE,
 });
 
-const buildIssuesRequest = (selectors, url) => {
-  const config = {
-    params: {},
-  };
-  if (selectors.filter.language.value !== 'all') {
-    config.params.language = selectors.filter.language.value;
-  }
-  if (selectors.filter.projectSize.value !== 'all') {
-    config.params.projectSize = selectors.filter.projectSize.value;
-  }
-  config.params.sortBy = selectors.sorter.sortBy.value;
-  config.params.order = selectors.sorter.order.value;
-  return axios.get(url, config);
-};
-
 export const fetchIssues = () => (dispatch, getState) => {
   const state = getState();
-  const nextLink = getNextLink(state.data);
-  if (isFetching(state.data) || !nextLink) {
+  if (isFetching(state.data)) {
     return;
   } else {
-    const request = buildIssuesRequest(state.issueSelectors, nextLink);
+    const { url, query } = buildIssuesRequest(state);
+    const config = { params: query };
+    const request = axios.get(url, config);
     dispatch(fetchIssuesRequest());
     request.then(
       (response) => {
