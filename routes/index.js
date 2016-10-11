@@ -9,6 +9,7 @@ const ISSUES_QUERY_OPTIONS = {
   language: Symbol('language'),
   page: Symbol('page'),
   createdAt: Symbol('createdAt'),
+  projectSize: Symbol('projectSize'),
   sortBy: Symbol('createdAt'),
   order: Symbol('order'),
 };

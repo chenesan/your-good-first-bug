@@ -1,14 +1,14 @@
 const models = require('./models');
 
-function buildCreatedAtQuery(qs) {
+function buildComparedQuery(qs, transformer = undefined) {
   if (!qs) {
     return undefined;
   } else {
     const operator = qs[0];
-    const dateString = qs.slice(1);
-    let date;
+    const valueString = qs.slice(1);
+    let value;
     try {
-      date = new Date(dateString);
+      value = transformer ? transformer(valueString) : valueString;
     }
     catch (err) {
       console.error('Fail to parse date. Not to create createdAt query.');
@@ -16,11 +16,11 @@ function buildCreatedAtQuery(qs) {
     }
     if (operator === '>') {
       return {
-        $gt: date,
+        $gt: value,
       };
     } else if (operator === '<') {
       return {
-        $lt: date,
+        $lt: value,
       };
     } else {
       console.error('Fail to parse operator, Not to create createdAt query.');
@@ -71,9 +71,33 @@ function buildQuery(rawQuery) {
       }
       return newQuery;
     },
+    projectSize: (q, projectSize) => {
+      const newQuery = Object.assign({}, q);
+      let hasIncludedProject = false;
+      const includeLength = newQuery.include.length;
+      for (let i = 0; i < includeLength; i++) {
+        const includedModel = newQuery.include[i];
+        if (includedModel.model === models.Project) {
+          hasIncludedProject = true;
+          includedModel.where = includedModel.where ? includedModel.where : {};
+          includedModel.where.size = buildComparedQuery(projectSize, parseInt);
+        }
+      }
+      if (!hasIncludedProject) {
+        newQuery.include.push({
+          model: models.Project,
+          attributes: ['name', 'url', 'description', 'size'],
+          where: {
+            size: buildComparedQuery(projectSize, parseInt),
+          },
+        });
+      }
+      console.log(newQuery);
+      return newQuery;
+    },
     createdAt: (q, createdAt) => {
       const newQuery = Object.assign({}, q);
-      newQuery.where.createdAt = buildCreatedAtQuery(createdAt);
+      newQuery.where.createdAt = buildComparedQuery(createdAt, Date);
       return newQuery;
     },
     sortBy: (q, sortBy) => {
@@ -127,8 +151,10 @@ function buildQuery(rawQuery) {
 }
 
 function queryIssues(rawQuery, page = 1, limit = 100) {
+  console.log('Receive rawQuery: ', rawQuery);
   const query = buildQuery(rawQuery);
   const paginatedQuery = buildPaginatedQuery(query, page, limit);
+  console.log('Build query: ', paginatedQuery, paginatedQuery.include[0].where);
   return models.Issue.findAndCountAll(paginatedQuery)
   .catch((err) => { throw err; })
   .then(
