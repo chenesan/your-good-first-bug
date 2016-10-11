@@ -13,8 +13,8 @@ const initialState = {
   },
   sorter: {
     sortBy: {
-      value: 'date',
-      options: ['date', 'popularity'],
+      value: 'createdAt',
+      options: ['createdAt', 'popularity', 'projectSize'],
     },
     order: {
       value: 'descendant',

@@ -31,7 +31,7 @@ const buildIssue = (rawIssue) => (
       size: rawIssue.project.size,
     },
     url: rawIssue.url,
-    date: rawIssue.createdAt,
+    createdAt: rawIssue.createdAt,
     id: rawIssue.id,
   }
 );

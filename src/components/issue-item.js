@@ -19,7 +19,7 @@ class IssueItem extends Component {
             <a href={this.props.issueData.url} className="issue">Issue source</a>
             <a href={this.props.issueData.project.url} className="project">project source</a>
           </address>
-          <time className="date">{this.props.issueData.date}</time>
+          <time className="date">{this.props.issueData.createdAt}</time>
         </footer>
       </article>
     );
@@ -35,7 +35,7 @@ IssueItem.propTypes = {
       url: React.PropTypes.string.isRequired,
       description: React.PropTypes.string.isRequired,
     }),
-    date: React.PropTypes.instanceOf(Date),
+    createdAt: React.PropTypes.instanceOf(Date),
     url: React.PropTypes.string.isRequired,
   }),
 };
