@@ -57,8 +57,8 @@ const buildIssuesRequest = (selectors, url) => {
   if (selectors.filter.projectSize.value !== 'all') {
     config.params.projectSize = selectors.filter.projectSize.value;
   }
-  config.params.sortBy = selectors.sorter.sortBy;
-  config.params.order = selectors.sorter.order;
+  config.params.sortBy = selectors.sorter.sortBy.value;
+  config.params.order = selectors.sorter.order.value;
   return axios.get(url, config);
 };
 
