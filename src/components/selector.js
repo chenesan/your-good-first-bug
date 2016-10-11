@@ -6,9 +6,12 @@ class Selector extends Component {
     this.onChangeHandler = this.onChangeHandler.bind(this);
   }
   onChangeHandler(event) {
+    const selectedIndex = this.props.options.findIndex(
+      (option) => option.value === event.currentTarget.value
+    );
     const change = {
       [this.props.name]: {
-        value: event.currentTarget.value,
+        selectedIndex,
       },
     };
     this.props.changeHandler(change);

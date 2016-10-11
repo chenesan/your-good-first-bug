@@ -3,29 +3,45 @@ import { CHANGE_ISSUES_SELECTORS } from '../actions';
 const initialState = {
   filter: {
     language: {
-      value: 'all',
-      options: ['all', 'Python', 'JavaScript'],
+      selectedIndex: 0,
+      options: [
+        { value: 'all' },
+        { value: 'Python' },
+        { value: 'JavaScript' },
+      ],
     },
     projectSize: {
-      value: 'all',
-      options: ['all', 'large', 'medium', 'small'],
+      selectedIndex: 0,
+      options: [
+        { value: 'all' },
+        { value: '>3000', description: 'large' },
+        { value: '<3000&>1000', description: 'medium' },
+        { value: '<1000', description: 'small' },
+      ],
     },
   },
   sorter: {
     sortBy: {
-      value: 'createdAt',
-      options: ['createdAt', 'popularity', 'projectSize'],
+      selectedIndex: 0,
+      options: [
+        { value: 'createdAt' },
+        { value: 'popularity' },
+        { value: 'projectSize', description: 'Project Size' },
+      ],
     },
     order: {
-      value: 'descendant',
-      options: ['descendant', 'ascendant'],
+      selectedIndex: 0,
+      options: [
+        { value: 'descendant' },
+        { value: 'ascendant' },
+      ],
     },
   },
 };
 
-const setSelectorValue = (selector, value) => {
+const setSelectedIndex = (selector, selectedIndex) => {
   return Object.assign({}, selector, {
-    value,
+    selectedIndex,
   });
 };
 
@@ -36,7 +52,11 @@ const setSubSelectors = (subSelectors, changes) => {
         return prev;
       } else {
         return Object.assign({}, prev, {
-          [key]: Object.assign({}, prev[key], setSelectorValue(prev[key], changes[key].value)),
+          [key]: Object.assign(
+            {},
+            prev[key],
+            setSelectedIndex(prev[key], changes[key].selectedIndex)
+          ),
         });
       }
     },
@@ -70,6 +90,24 @@ export const issueSelectors = (state = initialState, action) => {
 };
 
 // selectors
+
+export const getSelectorValue = (state, subSelectorsName, selectorName) => {
+  const selector = state[subSelectorsName][selectorName];
+  return selector.options[selector.selectedIndex].value;
+};
+
+export const buildQuery = (state) => {
+  const config = {};
+  if (getSelectorValue(state, 'filter', 'language') !== 'all') {
+    config.language = getSelectorValue(state, 'filter', 'language');
+  }
+  if (getSelectorValue(state, 'filter', 'projectSize') !== 'all') {
+    config.projectSize = getSelectorValue(state, 'filter', 'projectSize');
+  }
+  config.sortBy = getSelectorValue(state, 'sorter', 'sortBy');
+  config.order = getSelectorValue(state, 'sorter', 'order');
+  return config;
+};
 
 export const getSelectors = (state) => state;
 
