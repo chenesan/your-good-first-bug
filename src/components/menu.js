@@ -18,21 +18,13 @@ class Menu extends Component {
     return classList.join(' ');
   }
   selectorChangeHandler(change) {
-    const key = Object.keys(change)[0];
-    const wrappedChange = {
-      filter: {
-        [key]: {
-          value: change[key],
-        },
-      },
-    };
-    this.props.selectorChangeHandler(wrappedChange);
+    this.props.selectorChangeHandler(change);
   }
   render() {
     const className = this.getClassName();
     return (<aside className={className}>
       <SubSelectors
-        name="sortBy" selectors={this.props.selectors.sorter}
+        name="sorter" selectors={this.props.selectors.sorter}
         selectorChangeHandler={this.selectorChangeHandler}
       />
       <SubSelectors

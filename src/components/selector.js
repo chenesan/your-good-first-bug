@@ -7,7 +7,9 @@ class Selector extends Component {
   }
   onChangeHandler(event) {
     const change = {
-      [this.props.name]: event.currentTarget.value,
+      [this.props.name]: {
+        value: event.currentTarget.value,
+      },
     };
     this.props.changeHandler(change);
   }

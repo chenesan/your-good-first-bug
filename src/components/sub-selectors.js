@@ -2,6 +2,16 @@ import React, { Component } from 'react';
 import Selector from './selector';
 
 class SubSelectors extends Component {
+  constructor(props) {
+    super(props);
+    this.changeHandler = this.changeHandler.bind(this);
+  }
+  changeHandler(change) {
+    const wrappedChange = {
+      [this.props.name]: change,
+    };
+    this.props.selectorChangeHandler(wrappedChange);
+  }
   render() {
     return (
       <div className={this.props.name}>
@@ -13,7 +23,7 @@ class SubSelectors extends Component {
                 key={index}
                 name={key}
                 options={this.props.selectors[key].options.map(value => ({ value }))}
-                changeHandler={this.props.selectorChangeHandler}
+                changeHandler={this.changeHandler}
               />
             )
           )
