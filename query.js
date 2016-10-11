@@ -76,6 +76,30 @@ function buildQuery(rawQuery) {
       newQuery.where.createdAt = buildCreatedAtQuery(createdAt);
       return newQuery;
     },
+    sortBy: (q, sortBy) => {
+      const newQuery = Object.assign({}, q);
+      const sortingDirection = q.order[0][q.order[0].length - 1];
+      // project popularity, project size, createdAt
+      const sortingMap = {
+        createdAt: ['createdAt'],
+        popularity: [models.Project, 'popularity'],
+        projectSize: [models.Project, 'size'],
+      };
+      newQuery.order = sortingMap[sortBy] ? [[...sortingMap[sortBy], sortingDirection]] : q.order;
+      return newQuery;
+    },
+    order: (q, order) => {
+      const newQuery = Object.assign({}, q);
+      const orderMap = {
+        ascendant: 'ASC',
+        descendant: 'DESC',
+      };
+      const newOrder = orderMap[order] ? orderMap[order] : 'DESC';
+      newQuery.order = newQuery.order.map(
+        (sortingOpt) => [...sortingOpt.slice(0, sortingOpt.length - 1), newOrder]
+      );
+      return newQuery;
+    },
   };
   const query = {
     include: [
@@ -91,12 +115,13 @@ function buildQuery(rawQuery) {
       },
     ],
     where: {},
+    order: [['createdAt', 'DESC']],
   };
   return Object.keys(queryBuilders).reduce((newQuery, option) => {
     if (rawQuery[option] !== undefined) {
-      return queryBuilders[option](query, rawQuery[option]);
+      return queryBuilders[option](newQuery, rawQuery[option]);
     } else {
-      return query;
+      return newQuery;
     }
   }, query);
 }
