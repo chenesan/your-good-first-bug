@@ -4,12 +4,14 @@ import { isFetching } from '../reducers/data';
 
 function getDataFromLinkHeader(link) {
   const data = {};
-  link.split(',').forEach(line => {
-    const [urlSeg, relSeg] = line.split(';').map(val => val.trim());
-    const url = urlSeg.slice(1, -1);
-    const rel = relSeg.split('=')[1].slice(1, -1);
-    data[rel] = url;
-  });
+  if (link) {
+    link.split(',').forEach(line => {
+      const [urlSeg, relSeg] = line.split(';').map(val => val.trim());
+      const url = urlSeg.slice(1, -1);
+      const rel = relSeg.split('=')[1].slice(1, -1);
+      data[rel] = url;
+    });
+  }
   return data;
 }
 
@@ -18,6 +20,7 @@ export const FETCH_ISSUES_REQUEST = 'FETCH_ISSUES_REQUEST';
 export const FETCH_ISSUES_SUCCESS = 'FETCH_ISSUES_SUCCESS';
 export const FETCH_ISSUES_FAILURE = 'FETCH_ISSUES_FAILURE';
 export const CHANGE_ISSUES_SELECTORS = 'CHANGE_ISSUES_SELECTORS';
+export const UPDATE_SELECTOR_OPTIONS = 'UPDATE_SELECTOR_OPTIONS';
 
 export const changeSelectors = (changes) => {
   const action = {
@@ -73,4 +76,12 @@ export const fetchIssues = () => (dispatch, getState) => {
       (err) => { console.error(err); }
     );
   }
+};
+
+export const updateSelectorOptions = (optionsGroup) => {
+  const action = {
+    type: UPDATE_SELECTOR_OPTIONS,
+    optionsGroup,
+  };
+  return action;
 };

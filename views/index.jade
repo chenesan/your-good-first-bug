@@ -3,4 +3,5 @@ extends layout
 block content
   div(id='app-entry-point')
     !=html
+  script window.__PRELOADED_STATE__=!{preloadedState}
   script(src='/public/bundle.js')

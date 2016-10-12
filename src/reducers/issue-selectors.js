@@ -1,45 +1,24 @@
-import { CHANGE_ISSUES_SELECTORS } from '../actions';
+import { CHANGE_ISSUES_SELECTORS, UPDATE_SELECTOR_OPTIONS } from '../actions';
 
 const initialState = {
   filter: {
     language: {
       selectedIndex: 0,
-      options: [
-        { value: 'all' },
-        { value: 'Python' },
-        { value: 'JavaScript' },
-      ],
+      options: [],
     },
     projectSize: {
       selectedIndex: 0,
-      options: [
-        { value: 'all' },
-        { value: JSON.stringify([{ operator: '>=', value: 3000 }]), description: 'large' },
-        { value: JSON.stringify([
-          { operator: '<', value: 3000 },
-          { operator: '>=', value: 1000 },
-        ]),
-          description: 'medium',
-        },
-        { value: JSON.stringify([{ operator: '<', value: 1000 }]), description: 'small' },
-      ],
+      options: [],
     },
   },
   sorter: {
     sortBy: {
       selectedIndex: 0,
-      options: [
-        { value: 'createdAt' },
-        { value: 'popularity' },
-        { value: 'projectSize', description: 'Project Size' },
-      ],
+      options: [],
     },
     order: {
       selectedIndex: 0,
-      options: [
-        { value: 'descendant' },
-        { value: 'ascendant' },
-      ],
+      options: [],
     },
   },
 };
@@ -87,6 +66,41 @@ export const issueSelectors = (state = initialState, action) => {
         state
       );
       return nextState;
+    }
+    case UPDATE_SELECTOR_OPTIONS: {
+      return action.optionsGroup.reduce(
+        (prevState, optionsObj) => {
+          const category = optionsObj.category;
+          const subSelectors = prevState[category];
+          if (!subSelectors) {
+            return prevState;
+          } else {
+            const selectorName = optionsObj.selectorName;
+            const selector = subSelectors[selectorName];
+            if (!selector) {
+              return prevState;
+            } else {
+              const oldOptions = selector.options;
+              const newOptions = [...oldOptions].concat(
+                optionsObj.options.filter(
+                  (option) => oldOptions.every(
+                    (oldOption) => oldOption.value !== option.value
+                  )
+                )
+              );
+              const nextState = Object.assign({}, prevState, {
+                [category]: Object.assign({}, subSelectors, {
+                  [selectorName]: Object.assign({}, selector, {
+                    options: newOptions,
+                  }),
+                }),
+              });
+              return nextState;
+            }
+          }
+        },
+        state
+      );
     }
     default: {
       return state;
