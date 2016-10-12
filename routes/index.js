@@ -3,7 +3,15 @@ var url = require('url');
 var router = express.Router();
 var apiRouter = express.Router();
 var v1Router = express.Router();
-import { queryIssues } from '../query';
+import co from 'co';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import { queryIssues, queryDistinctLanguages } from '../query';
+import AppContainer from '../src/containers/app-container';
+import { updateSelectorOptions } from '../src/actions';
+import reducers from '../src/reducers';
 
 const ISSUES_QUERY_OPTIONS = {
   language: Symbol('language'),
@@ -25,6 +33,7 @@ function buildLinkUrl(urlObject, query, page) {
 }
 
 function buildLinkHeaders(queryResult, baseHref, query) {
+  console.log(queryResult, baseHref, query);
   const pageTotal = queryResult.pageTotal;
   const currentPage = query.page ? Number(query.page, 10) : 1;
   const link = {};
@@ -61,6 +70,7 @@ v1Router.route('/issues')
     (result) => {
       const baseHref = buildHref(req);
       const linkHeaders = buildLinkHeaders(result, baseHref, query);
+      console.log(linkHeaders);
       res.links(linkHeaders);
       res.json(result.data);
     },
@@ -72,10 +82,65 @@ v1Router.route('/issues')
 });
 
 apiRouter.use('/v1', v1Router);
-
 /* GET home page. */
+
+var buildOptionsOfSelectors = co.wrap(function*() {
+  const languageDistinctPromise = queryDistinctLanguages();
+  return [
+    {
+      category: 'filter',
+      selectorName: 'language',
+      options: [{ value: 'all' }, ...(yield languageDistinctPromise)],
+    },
+    {
+      category: 'filter',
+      selectorName: 'projectSize',
+      options: [
+        { value: 'all' },
+        { value: JSON.stringify([{ operator: '>=', value: 3000 }]), description: 'large' },
+        { value: JSON.stringify([
+          { operator: '<', value: 3000 },
+          { operator: '>=', value: 1000 },
+        ]),
+          description: 'medium',
+        },
+        { value: JSON.stringify([{ operator: '<', value: 1000 }]), description: 'small' },
+      ],
+    },
+    {
+      category: 'sorter',
+      selectorName: 'sortBy',
+      options: [
+        { value: 'createdAt' },
+        { value: 'popularity' },
+        { value: 'projectSize', description: 'Project Size' },
+      ],
+    },
+    {
+      category: 'sorter',
+      selectorName: 'order',
+      options: [
+        { value: 'descendant' },
+        { value: 'ascendant' },
+      ],
+    },
+  ];
+});
+
 router.get('/', function(req, res, next) {
-  res.render('index');
+  const store = createStore(reducers);
+  buildOptionsOfSelectors().then(
+    (selectorOptions) => {
+      store.dispatch(updateSelectorOptions(selectorOptions));
+      const stateString = JSON.stringify(store.getState());
+      const html = renderToString(
+        <Provider store={store}>
+          <AppContainer />
+        </Provider>
+      );
+      res.render('index', { html, preloadedState: stateString });
+    }
+  );
 });
 
 router.use('/api', apiRouter);

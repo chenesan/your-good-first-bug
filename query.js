@@ -205,7 +205,15 @@ function queryIssues(rawQuery, page = 1, limit = 100) {
   );
 }
 
+const queryDistinctLanguages = () => {
+  return models.Language.aggregate('name', 'DISTINCT', { plain: false })
+  .then((cols) =>
+    cols.filter(col => !!col.DISTINCT)
+    .map(col => ({ value: col.DISTINCT }))
+  );
+};
 
 module.exports = {
   queryIssues,
+  queryDistinctLanguages,
 };
