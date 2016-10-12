@@ -14,9 +14,14 @@ const initialState = {
       selectedIndex: 0,
       options: [
         { value: 'all' },
-        { value: '>3000', description: 'large' },
-        { value: '<3000&>1000', description: 'medium' },
-        { value: '<1000', description: 'small' },
+        { value: JSON.stringify([{ operator: '>=', value: 3000 }]), description: 'large' },
+        { value: JSON.stringify([
+          { operator: '<', value: 3000 },
+          { operator: '>=', value: 1000 },
+        ]),
+          description: 'medium',
+        },
+        { value: JSON.stringify([{ operator: '<', value: 1000 }]), description: 'small' },
       ],
     },
   },

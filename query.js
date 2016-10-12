@@ -1,31 +1,62 @@
 const models = require('./models');
 
 function buildComparedQuery(qs, transformer = undefined) {
+  // the qs should be JSON-string, containing an array
+  // whose element is an object containing following field:
+  // {
+  //   operator: string, including '>', '<', '>=', '<='...
+  //   value: the value we want to compared
+  // }
+  // If the `transformer` argument is given, the JSON-parsed
+  // value will be passed to get the value to compared.
+  const comparatorMap = {
+    '>': (value) => ({
+      $gt: value,
+    }),
+    '>=': (value) => ({
+      $gte: value,
+    }),
+    '<': (value) => ({
+      $lt: value,
+    }),
+    '<=': (value) => ({
+      $lte: value,
+    }),
+    '=': (value) => ({
+      $eq: value,
+    }),
+    '!=': (value) => ({
+      $ne: value,
+    }),
+  };
   if (!qs) {
     return undefined;
   } else {
-    const operator = qs[0];
-    const valueString = qs.slice(1);
-    let value;
+    let queries;
     try {
-      value = transformer ? transformer(valueString) : valueString;
+      queries = JSON.parse(qs);
     }
     catch (err) {
-      console.error('Fail to parse date. Not to create createdAt query.');
-      return undefined;
+      console.error('Fail to parse query string with JSON: ', qs);
+      return {};
     }
-    if (operator === '>') {
-      return {
-        $gt: value,
-      };
-    } else if (operator === '<') {
-      return {
-        $lt: value,
-      };
-    } else {
-      console.error('Fail to parse operator, Not to create createdAt query.');
-      return undefined;
-    }
+    return queries.reduce((where, query) => {
+      const comparator = comparatorMap[query.operator];
+      if (comparator === undefined) {
+        console.log('Fail to parse comparator with operator: ', query.operator);
+        console.log('Just don\'t put it into WHERE query.');
+        return query;
+      }
+      let value;
+      try {
+        value = transformer ? transformer(query.value) : query.value;
+      }
+      catch (err) {
+        console.error('Fail to transform value: ', query[1], ' with transformer: ', transformer);
+        return query;
+      }
+      return Object.assign({}, where, comparator(value));
+    }, {});
   }
 }
 
@@ -80,7 +111,7 @@ function buildQuery(rawQuery) {
         if (includedModel.model === models.Project) {
           hasIncludedProject = true;
           includedModel.where = includedModel.where ? includedModel.where : {};
-          includedModel.where.size = buildComparedQuery(projectSize, parseInt);
+          includedModel.where.size = buildComparedQuery(projectSize);
         }
       }
       if (!hasIncludedProject) {
@@ -88,7 +119,7 @@ function buildQuery(rawQuery) {
           model: models.Project,
           attributes: ['name', 'url', 'description', 'size'],
           where: {
-            size: buildComparedQuery(projectSize, parseInt),
+            size: buildComparedQuery(projectSize),
           },
         });
       }
@@ -97,7 +128,7 @@ function buildQuery(rawQuery) {
     },
     createdAt: (q, createdAt) => {
       const newQuery = Object.assign({}, q);
-      newQuery.where.createdAt = buildComparedQuery(createdAt, Date);
+      newQuery.where.createdAt = buildComparedQuery(createdAt);
       return newQuery;
     },
     sortBy: (q, sortBy) => {
