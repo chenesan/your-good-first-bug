@@ -3,7 +3,13 @@ var url = require('url');
 var router = express.Router();
 var apiRouter = express.Router();
 var v1Router = express.Router();
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import { queryIssues } from '../query';
+import AppContainer from '../src/containers/app-container';
+import reducers from '../src/reducers';
 
 const ISSUES_QUERY_OPTIONS = {
   language: Symbol('language'),
@@ -72,10 +78,21 @@ v1Router.route('/issues')
 });
 
 apiRouter.use('/v1', v1Router);
-
 /* GET home page. */
+
+function buildPreloadedState() {
+  return {};
+}
+
 router.get('/', function(req, res, next) {
-  res.render('index');
+  const preloadedState = buildPreloadedState();
+  const store = createStore(reducers, preloadedState);
+  const html = renderToString(
+    <Provider store={store}>
+      <AppContainer />
+    </Provider>
+  );
+  res.render('index', { html });
 });
 
 router.use('/api', apiRouter);
