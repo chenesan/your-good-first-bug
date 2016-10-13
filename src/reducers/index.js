@@ -1,11 +1,9 @@
 import { combineReducers } from 'redux';
 import { data, getNextLink, getRootUrl } from './data';
-import { ui } from './ui';
 import { issueSelectors, buildQuery } from './issue-selectors';
 
 const reducer = combineReducers({
   data,
-  ui,
   issueSelectors,
 });
 
