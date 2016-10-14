@@ -39,14 +39,11 @@ class App extends Component {
   render() {
     return (
       <main
-        className="main-app container"
+        className="main-app"
         onScroll={this.handleScrolling} onWheel={this.handleScrolling}
       >
-        {
-          this.props.fetching ? <LoadingTip /> : false
-        }
         <Jumbotron title="Your Good First Bug" />
-        <div className="main-content">
+        <div className="main-content container">
           <Menu
             gridClass="col-sm-2"
             selectors={this.props.selectors}
@@ -69,6 +66,9 @@ class App extends Component {
           className={`menu-button${this.state.showMenu ? ' -hide' : ' -side'}`}
           onClick={this.handleClickOnMenuButton}
         >button</button>
+        {
+          this.props.fetching ? <LoadingTip /> : false
+        }
       </main>
     );
   }
