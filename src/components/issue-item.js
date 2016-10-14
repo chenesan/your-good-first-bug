@@ -2,26 +2,31 @@ import React, { Component } from 'react';
 
 class IssueItem extends Component {
   render() {
+    const time = this.props.issueData.createdAt.split('T')[0];
     return (
-      <article className="issue-item col-xs-12 col-sm-5">
-        <h3 className="title">{this.props.issueData.title}</h3>
-        <footer className="metadata">
-          <span className="project">{this.props.issueData.project.name}</span>
-          <div className="projectDescription">{this.props.issueData.project.description}</div>
-          <div className="languages">
-          {
-            this.props.issueData.languages.map(
-              (language) => <span className="language">{language}</span>
-            )
-          }
-          </div>
-          <address className="sources">
-            <a href={this.props.issueData.url} className="issue">Issue source</a>
-            <a href={this.props.issueData.project.url} className="project">project source</a>
-          </address>
-          <time className="date">{this.props.issueData.createdAt}</time>
-        </footer>
-      </article>
+      <div className="col col-xs-12 col-sm-6">
+        <article className="issue-item">
+          <h3 className="title">
+            <a href={this.props.issueData.url} className="issue">
+              {this.props.issueData.title}
+            </a>
+          </h3>
+          <section className="content">
+            <a href={this.props.issueData.project.url} className="project">
+              {this.props.issueData.project.name}
+            </a>
+            <div className="projectDescription">{this.props.issueData.project.description}</div>
+            <div className="languages">
+            {
+              this.props.issueData.languages.map(
+                (language) => <span className="language">{language}</span>
+              )
+            }
+            </div>
+            <time className="time">{time}</time>
+          </section>
+        </article>
+      </div>
     );
   }
 }

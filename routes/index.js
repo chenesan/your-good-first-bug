@@ -89,12 +89,14 @@ var buildOptionsOfSelectors = co.wrap(function*() {
   return [
     {
       category: 'filter',
-      selectorName: 'language',
+      selectorPropName: 'language',
+      selectorName: 'Language',
       options: [{ value: 'all' }, ...(yield languageDistinctPromise)],
     },
     {
       category: 'filter',
-      selectorName: 'projectSize',
+      selectorPropName: 'projectSize',
+      selectorName: 'Project Size',
       options: [
         { value: 'all' },
         { value: JSON.stringify([{ operator: '>=', value: 3000 }]), description: 'large' },
@@ -109,16 +111,18 @@ var buildOptionsOfSelectors = co.wrap(function*() {
     },
     {
       category: 'sorter',
-      selectorName: 'sortBy',
+      selectorPropName: 'sortBy',
+      selectorName: 'Sort By',
       options: [
-        { value: 'createdAt' },
+        { value: 'createdAt', description: 'Created Time' },
         { value: 'popularity' },
         { value: 'projectSize', description: 'Project Size' },
       ],
     },
     {
       category: 'sorter',
-      selectorName: 'order',
+      selectorPropName: 'order',
+      selectorName: 'Order',
       options: [
         { value: 'descendant' },
         { value: 'ascendant' },

@@ -3,20 +3,24 @@ import { CHANGE_ISSUES_SELECTORS, UPDATE_SELECTOR_OPTIONS } from '../actions';
 const initialState = {
   filter: {
     language: {
+      name: 'Language',
       selectedIndex: 0,
       options: [],
     },
     projectSize: {
+      name: 'Project Size',
       selectedIndex: 0,
       options: [],
     },
   },
   sorter: {
     sortBy: {
+      name: 'Sort By',
       selectedIndex: 0,
       options: [],
     },
     order: {
+      name: 'Order',
       selectedIndex: 0,
       options: [],
     },
@@ -75,8 +79,8 @@ export const issueSelectors = (state = initialState, action) => {
           if (!subSelectors) {
             return prevState;
           } else {
-            const selectorName = optionsObj.selectorName;
-            const selector = subSelectors[selectorName];
+            const selectorPropName = optionsObj.selectorPropName;
+            const selector = subSelectors[selectorPropName];
             if (!selector) {
               return prevState;
             } else {
@@ -90,7 +94,7 @@ export const issueSelectors = (state = initialState, action) => {
               );
               const nextState = Object.assign({}, prevState, {
                 [category]: Object.assign({}, subSelectors, {
-                  [selectorName]: Object.assign({}, selector, {
+                  [selectorPropName]: Object.assign({}, selector, {
                     options: newOptions,
                   }),
                 }),
@@ -110,8 +114,8 @@ export const issueSelectors = (state = initialState, action) => {
 
 // selectors
 
-export const getSelectorValue = (state, subSelectorsName, selectorName) => {
-  const selector = state[subSelectorsName][selectorName];
+export const getSelectorValue = (state, subSelectorsName, selectorPropName) => {
+  const selector = state[subSelectorsName][selectorPropName];
   return selector.options[selector.selectedIndex].value;
 };
 

@@ -14,14 +14,14 @@ class SubSelectors extends Component {
   }
   render() {
     return (
-      <div className={this.props.name}>
+      <div className={`sub-selectors ${this.props.name}`}>
         <h4 className="title">{this.props.name}</h4>
         {
           Object.keys(this.props.selectors).map(
             (key, index) => (
               <Selector
                 key={index}
-                name={key}
+                name={this.props.selectors[key].name}
                 options={this.props.selectors[key].options}
                 changeHandler={this.changeHandler}
               />
