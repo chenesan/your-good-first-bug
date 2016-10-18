@@ -22,6 +22,7 @@ class SubSelectors extends Component {
               <Selector
                 key={index}
                 name={this.props.selectors[key].name}
+                propertyName={key}
                 options={this.props.selectors[key].options}
                 changeHandler={this.changeHandler}
               />

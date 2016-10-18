@@ -10,7 +10,7 @@ class Selector extends Component {
       (option) => option.value === event.currentTarget.value
     );
     const change = {
-      [this.props.name]: {
+      [this.props.propertyName]: {
         selectedIndex,
       },
     };
@@ -42,6 +42,7 @@ Selector.propTypes = {
       description: React.PropTypes.string,
     })
   ).isRequired,
+  propertyName: React.PropTypes.string.isRequired,
   changeHandler: React.PropTypes.func.isRequired,
 };
 

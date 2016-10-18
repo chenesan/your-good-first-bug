@@ -17,11 +17,11 @@ class IssueItem extends Component {
             </a>
             <div className="projectDescription">{this.props.issueData.project.description}</div>
             <div className="languages">
-            {
-              this.props.issueData.languages.map(
-                (language) => <span className="language">{language}</span>
-              )
-            }
+              {
+                this.props.issueData.languages.map(
+                  (language) => <span className="language">{language}</span>
+                )
+              }
             </div>
             <time className="time">{time}</time>
           </section>
