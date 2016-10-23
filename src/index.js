@@ -7,10 +7,18 @@ import thunkMiddleware from 'redux-thunk';
 import reducer from './reducers';
 import AppContainer from './containers/app-container';
 
+const middlewares = [
+  thunkMiddleware,
+];
+
+if (process.env.DEBUG) {
+  middlewares.push(createLogger());
+}
+
 const store = createStore(
   reducer,
   typeof window === 'undefined' ? undefined : window.__PRELOADED_STATE__,
-  applyMiddleware(thunkMiddleware, createLogger())
+  applyMiddleware(...middlewares)
 );
 
 ReactDOM.render(

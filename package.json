@@ -4,7 +4,8 @@
   "description": "Here to find your good first bug",
   "main": "index.js",
   "scripts": {
-    "test-server": "NODE_ENV=production; babel-node bin/www;",
+    "production": "NODE_ENV=production; babel-node bin/www;",
+    "production-build": "webpack; gulp build;",
     "express": "babel-node bin/www;",
     "express-gulp": "DEV_PORT=3000 gulp;",
     "dev-hot": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --config=webpack.dev.config.js",
