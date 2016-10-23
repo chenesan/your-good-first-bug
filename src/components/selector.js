@@ -20,11 +20,16 @@ class Selector extends Component {
     return (
       <div className="selection">
         <h5 className="name">{this.props.name}</h5>
-        <select name="condition" className="options" onChange={this.onChangeHandler}>
+        <select
+          name="condition" className="options"
+          onChange={this.onChangeHandler}
+        >
           {
             this.props.options.map(
               (option) => (
-                <option value={option.value}>{option.description || option.value }</option>
+                <option value={option.value} selected={option.value === this.props.currentValue}>
+                  {option.description || option.value }
+                </option>
               )
             )
           }
@@ -42,6 +47,7 @@ Selector.propTypes = {
       description: React.PropTypes.string,
     })
   ).isRequired,
+  currentValue: React.PropTypes.string.isRequired,
   propertyName: React.PropTypes.string.isRequired,
   changeHandler: React.PropTypes.func.isRequired,
 };

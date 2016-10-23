@@ -7,6 +7,16 @@ class Menu extends Component {
     this.selectorChangeHandler = this.selectorChangeHandler.bind(this);
     this.getClassName = this.getClassName.bind(this);
   }
+  componentDidMount() {
+    if (typeof window !== 'undefined' && !window.sessionStorage.getItem('issueSelector')) {
+      window.sessionStorage.setItem('issueSelector', JSON.stringify(this.props.selectors));
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    if (this.props.selectors !== nextProps.selectors) {
+      window.sessionStorage.setItem('issueSelector', JSON.stringify(nextProps.selectors));
+    }
+  }
   getClassName() {
     const classList = ['main-menu', this.props.gridClass];
     if (this.props.side) {

@@ -15,6 +15,11 @@ if (process.env.DEBUG) {
   middlewares.push(createLogger());
 }
 
+if (typeof sessionStorage !== 'undefined') {
+  const issueSelector = JSON.parse(window.sessionStorage.getItem('issueSelector'));
+  window.__PRELOADED_STATE__.issueSelectors = issueSelector;
+}
+
 const store = createStore(
   reducer,
   typeof window === 'undefined' ? undefined : window.__PRELOADED_STATE__,

@@ -18,15 +18,19 @@ class SubSelectors extends Component {
         <h4 className="title">{this.props.name}</h4>
         {
           Object.keys(this.props.selectors).map(
-            (key, index) => (
-              <Selector
-                key={index}
-                name={this.props.selectors[key].name}
-                propertyName={key}
-                options={this.props.selectors[key].options}
-                changeHandler={this.changeHandler}
-              />
-            )
+            (key, index) => {
+              const selector = this.props.selectors[key];
+              return (
+                <Selector
+                  key={index}
+                  name={selector.name}
+                  propertyName={key}
+                  currentValue={selector.options[selector.selectedIndex].value}
+                  options={selector.options}
+                  changeHandler={this.changeHandler}
+                />
+              );
+            }
           )
         }
       </div>
@@ -40,6 +44,7 @@ SubSelectors.propTypes = {
     React.PropTypes.shape({
       name: React.PropTypes.string.isRequired,
       options: React.PropTypes.array.isRequired,
+      selectedIndex: React.PropTypes.number.isRequired,
     })
   ).isRequired,
   selectorChangeHandler: React.PropTypes.func.isRequired,
