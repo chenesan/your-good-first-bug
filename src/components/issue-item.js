@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Markdown from 'react-remarkable';
 
 class IssueItem extends Component {
   render() {
@@ -12,6 +13,9 @@ class IssueItem extends Component {
             </a>
           </h3>
           <section className="content">
+            <blockquote className="description">
+              <Markdown source={this.props.issueData.body} />
+            </blockquote>
             <a href={this.props.issueData.project.url} className="project">
               {this.props.issueData.project.name}
             </a>
@@ -35,6 +39,7 @@ IssueItem.propTypes = {
   issueData: React.PropTypes.shape({
     languages: React.PropTypes.arrayOf(() => true),
     title: React.PropTypes.string.isRequired,
+    body: React.PropTypes.string,
     project: React.PropTypes.shape({
       name: React.PropTypes.string.isRequired,
       url: React.PropTypes.string.isRequired,

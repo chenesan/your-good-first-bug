@@ -5869,7 +5869,8 @@ button.close {
   border-radius: 3%;
   background-color: white;
   margin: 10px 0 10px 0;
-  padding: 3%; }
+  padding: 3%;
+  overflow: scroll; }
   .issue-item > .title {
     font-size: 2em;
     margin-top: 0; }

@@ -26,6 +26,7 @@ const changeStatus = (status, option) => {
 const buildIssue = (rawIssue) => (
   {
     title: rawIssue.title,
+    body: rawIssue.body,
     languages: [rawIssue.project.language.name],
     project: {
       name: rawIssue.project.name,

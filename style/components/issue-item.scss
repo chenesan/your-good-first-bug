@@ -3,6 +3,7 @@
   background-color: theme-color(item, background);
   margin: 10px 0 10px 0;
   padding: 3%;
+  overflow: scroll;
 
   > .title {
     font-size: 2em;
