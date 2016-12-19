@@ -133,5 +133,4 @@ export const buildQuery = (state) => {
 };
 
 export const getSelectors = (state) => state;
-
 export default issueSelectors;

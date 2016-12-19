@@ -17,7 +17,9 @@ if (process.env.DEBUG) {
 
 if (typeof sessionStorage !== 'undefined') {
   const issueSelector = JSON.parse(window.sessionStorage.getItem('issueSelector'));
-  window.__PRELOADED_STATE__.issueSelectors = issueSelector;
+  if (issueSelector) {
+    window.__PRELOADED_STATE__.issueSelectors = issueSelector;
+  }
 }
 
 const store = createStore(
