@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
 import Markdown from 'react-remarkable';
 
+const HEAD_LINES_NUMBER = 3;
+
 class IssueItem extends Component {
+  getHeadLinesOfBody(body, lineNumber) {
+    const lines = body.split('\n');
+    return lines.slice(0, lineNumber).join('\n');
+  }
   render() {
     const time = this.props.issueData.createdAt.split('T')[0];
+    const headLines = this.getHeadLinesOfBody(this.props.issueData.body, HEAD_LINES_NUMBER);
     return (
       <div className="col col-xs-12 col-sm-6">
         <article className="issue-item">
@@ -14,8 +21,9 @@ class IssueItem extends Component {
           </h3>
           <section className="content">
             <blockquote className="description">
-              <Markdown source={this.props.issueData.body} />
+              <Markdown source={headLines} />
             </blockquote>
+            <a href={this.props.issueData.url} className="more">See more</a>
             <a href={this.props.issueData.project.url} className="project">
               {this.props.issueData.project.name}
             </a>
