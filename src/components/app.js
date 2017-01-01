@@ -49,7 +49,6 @@ class App extends Component {
         />
         <div className="main-content container">
           <Menu
-            gridClass="col-sm-2"
             selectors={this.props.selectors}
             selectorChangeHandler={this.props.selectorChangeHandler}
           />
@@ -62,7 +61,7 @@ class App extends Component {
           </div>
         </div>
         <Menu
-          hide={!this.state.showMenu} gridClass="col-xs-4" side
+          hide={!this.state.showMenu} side
           selectors={this.props.selectors}
           selectorChangeHandler={this.props.selectorChangeHandler}
         />

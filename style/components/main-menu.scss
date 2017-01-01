@@ -1,9 +1,11 @@
 .main-menu {
-
+  width: 225px;
+  padding-left: 20px;
   &.-side {
     position: fixed;
     left: 0;
     top: 0;
+
     height: 100vh;
     transition: left 0.5s;
     background-color: theme-color(bottom);

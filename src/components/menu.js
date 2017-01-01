@@ -18,7 +18,7 @@ class Menu extends Component {
     }
   }
   getClassName() {
-    const classList = ['main-menu', this.props.gridClass];
+    const classList = ['main-menu'];
     if (this.props.side) {
       classList.push('-side');
     }
@@ -47,7 +47,6 @@ class Menu extends Component {
 
 Menu.propTypes = {
   side: React.PropTypes.bool.isRequired,
-  gridClass: React.PropTypes.string.isRequired,
   hide: React.PropTypes.bool.isRequired,
   selectorChangeHandler: React.PropTypes.func.isRequired,
   selectors: React.PropTypes.shape({
