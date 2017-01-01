@@ -42,6 +42,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use('/', routes);
+app.use('/assets', express.static('assets'));
 app.use('/public', express.static('public'));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

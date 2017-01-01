@@ -6,8 +6,20 @@
 
   > .title {
     margin: auto;
+    display: flex;
     text-align: center;
-    font-size: 60px;
     color: theme-color(jumbotron, title);
+    height: 100%;
+
+    > .text {
+      margin: auto;
+      font-size: 1.8em;
+      font-family: Verdana;
+    }
+
+    > .fontImage {
+      width: 100%;
+      height: inherit;
+    }
   }
 }

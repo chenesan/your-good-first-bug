@@ -42,7 +42,11 @@ class App extends Component {
         className="main-app"
         onScroll={this.handleScrolling} onWheel={this.handleScrolling}
       >
-        <Jumbotron title="Your Good First Bug" />
+        <Jumbotron
+          title="Your Good First Bug"
+          showMenuButton={!this.state.showMenu}
+          menuButtonClickHandler={this.handleClickOnMenuButton}
+        />
         <div className="main-content container">
           <Menu
             gridClass="col-sm-2"
@@ -62,10 +66,6 @@ class App extends Component {
           selectors={this.props.selectors}
           selectorChangeHandler={this.props.selectorChangeHandler}
         />
-        <button
-          className={`menu-button${this.state.showMenu ? ' -hide' : ' -side'}`}
-          onClick={this.handleClickOnMenuButton}
-        >button</button>
         {
           this.props.fetching ? <LoadingTip /> : false
         }

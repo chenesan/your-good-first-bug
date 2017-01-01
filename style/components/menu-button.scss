@@ -1,14 +1,19 @@
-$menu-top: 20%;
-$menu-left: 0;
+$menu-top: 0px;
+$menu-left: 0px;
 
 .menu-button {
-  position: fixed;
-  top: $menu-top;
-  left: $menu-left;
-  width: 40px;
-  height: 40px;
+  background-color: gray;
+  width: 120px;
+  height: 120px;
   cursor: pointer;
-  @include debug-block(4);
+  border-color: gray;
+  display: flex;
+
+  > .icon {
+    margin: auto;
+    width: 96px;
+    height: 96px;
+  }
 
   &.-hide {
     display: none;
