@@ -5,7 +5,7 @@ class Jumbotron extends Component {
     return (
       <header className="main-jumbotron">
         <div
-          className={`menu-button${this.props.showMenuButton ? ' -side' : ' -hide'}`}
+          className={`menu-button${this.props.showSideBarButton ? ' -side' : ' -hide'}`}
           onClick={this.props.menuButtonClickHandler}
         >
           <img src="assets/images/icons/menu.svg" alt="menu" className="icon" />
@@ -20,7 +20,7 @@ class Jumbotron extends Component {
 }
 
 Jumbotron.propTypes = {
-  showMenuButton: React.PropTypes.bool.isRequired,
+  showSideBarButton: React.PropTypes.bool.isRequired,
   title: React.PropTypes.string.isRequired,
   menuButtonClickHandler: React.PropTypes.func.isRequired,
 };

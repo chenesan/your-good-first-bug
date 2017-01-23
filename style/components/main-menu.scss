@@ -5,10 +5,9 @@
     position: fixed;
     left: 0;
     top: 0;
-
     height: 100vh;
     transition: left 0.5s;
-    background-color: theme-color(bottom);
+    background-color: theme-color(menu);
     z-index: map-get($z-index, sideMenu);
   }
 

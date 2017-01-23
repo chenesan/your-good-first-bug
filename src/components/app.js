@@ -9,21 +9,29 @@ class App extends Component {
     super();
     this.handleClickOnMenuButton = this.handleClickOnMenuButton.bind(this);
     this.handleScrolling = this.handleScrolling.bind(this);
+    this.handleClickOnContent = this.handleClickOnContent.bind(this);
     this.state = {
-      showMenu: false,
+      showSideBar: false,
     };
   }
   componentDidMount() {
     this.props.loadIssueList();
   }
   handleClickOnMenuButton() {
-    if (!this.state.showMenu) {
+    if (!this.state.showSideBar) {
       this.setState(Object.assign({}, this.state, {
-        showMenu: true,
+        showSideBar: true,
       }));
     } else {
       this.setState(Object.assign({}, this.state, {
-        showMenu: false,
+        showSideBar: false,
+      }));
+    }
+  }
+  handleClickOnContent() {
+    if (this.state.showSideBar) {
+      this.setState(Object.assign({}, this.state, {
+        showSideBar: false,
       }));
     }
   }
@@ -44,10 +52,10 @@ class App extends Component {
       >
         <Jumbotron
           title="Your Good First Bug"
-          showMenuButton={!this.state.showMenu}
+          showSideBarButton={!this.state.showSideBar}
           menuButtonClickHandler={this.handleClickOnMenuButton}
         />
-        <div className="main-content container">
+        <div className="main-content container" onClick={this.handleClickOnContent}>
           <Menu
             selectors={this.props.selectors}
             selectorChangeHandler={this.props.selectorChangeHandler}
@@ -61,7 +69,7 @@ class App extends Component {
           </div>
         </div>
         <Menu
-          hide={!this.state.showMenu} side
+          hide={!this.state.showSideBar} side
           selectors={this.props.selectors}
           selectorChangeHandler={this.props.selectorChangeHandler}
         />
