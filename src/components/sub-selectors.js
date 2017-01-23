@@ -8,7 +8,7 @@ class SubSelectors extends Component {
   }
   changeHandler(change) {
     const wrappedChange = {
-      [this.props.name]: change,
+      [this.props.propName]: change,
     };
     this.props.selectorChangeHandler(wrappedChange);
   }
@@ -40,6 +40,7 @@ class SubSelectors extends Component {
 
 SubSelectors.propTypes = {
   name: React.PropTypes.string.isRequired,
+  propName: React.PropTypes.string.isRequired,
   selectors: React.PropTypes.shape(
     React.PropTypes.shape({
       name: React.PropTypes.string.isRequired,

@@ -34,11 +34,11 @@ class Menu extends Component {
     const className = this.getClassName();
     return (<aside className={className}>
       <SubSelectors
-        name="Sorter" selectors={this.props.selectors.sorter}
+        name="Sorter" propName="sorter" selectors={this.props.selectors.sorter}
         selectorChangeHandler={this.selectorChangeHandler}
       />
       <SubSelectors
-        name="Filter" selectors={this.props.selectors.filter}
+        name="Filter" propName="filter" selectors={this.props.selectors.filter}
         selectorChangeHandler={this.selectorChangeHandler}
       />
     </aside>);
