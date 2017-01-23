@@ -98,6 +98,9 @@ export const data = (state = initialState, action) => {
 // selector
 
 export const isFetching = (state) => state.status.fetching;
+export const hasReachedPageEnd = (state) => {
+  return false;
+};
 export const getNextLink = (state) => (
   state.status.link.next === NO_NEXT_LINK ? null : state.status.link.next
 );

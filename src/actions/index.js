@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { buildIssuesRequest } from '../reducers';
-import { isFetching } from '../reducers/data';
+import { isFetching, hasReachedPageEnd } from '../reducers/data';
 
 function getDataFromLinkHeader(link) {
   const data = {};
@@ -53,7 +53,7 @@ export const fetchIssuesFailure = () => ({
 
 export const fetchIssues = () => (dispatch, getState) => {
   const state = getState();
-  if (isFetching(state.data)) {
+  if (isFetching(state.data) || hasReachedPageEnd(state.data)) {
     return;
   } else {
     const { url, query } = buildIssuesRequest(state);
