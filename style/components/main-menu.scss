@@ -1,18 +1,19 @@
+$menu-width: 225px;
 .main-menu {
-  width: 225px;
+  width: $menu-width;
   padding-left: 20px;
   &.-side {
     position: fixed;
-    left: 0;
-    top: 0;
+    left: 0px;
+    top: 0px;
     height: 100vh;
-    transition: left 0.5s;
+    transition: left 1s;
     background-color: theme-color(menu);
     z-index: map-get($z-index, sideMenu);
   }
 
   &.-hide {
-    left: -999px;
-    transition: left 0.5s;
+    left: $menu-width * -1;
+    transition: left 1s;
   }
 }
