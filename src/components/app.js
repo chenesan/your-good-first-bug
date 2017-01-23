@@ -29,8 +29,8 @@ class App extends Component {
   }
   handleScrolling(event) {
     if (typeof document !== 'undefined') {
-      const { height } = document.body.getBoundingClientRect();
-      const pageY = event.pageY;
+      const { height } = document.querySelector('.main-content').getBoundingClientRect();
+      const { pageY } = event;
       if (height * 0.8 < pageY) {
         this.props.loadIssueList();
       }
