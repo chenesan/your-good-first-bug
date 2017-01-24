@@ -2,7 +2,7 @@ import axios from 'axios';
 import { buildIssuesRequest } from '../reducers';
 import { isFetching, hasReachedPageEnd, NO_NEXT_LINK } from '../reducers/data';
 
-function buildLinkDataFromLinkHeader(linkHeader) {
+function buildLinkStateFromLinkHeader(linkHeader) {
   const data = {};
   const state = {};
   if (linkHeader) {
@@ -15,6 +15,9 @@ function buildLinkDataFromLinkHeader(linkHeader) {
     state.next = data.next || NO_NEXT_LINK;
     state.isEnd = !data.last;
   } else {
+    // There's no link header in response
+    // That means the result of query has only one or zero page, and we reached
+    // the end.
     state.next = NO_NEXT_LINK;
     state.isEnd = true;
   }
@@ -68,10 +71,10 @@ export const fetchIssues = () => (dispatch, getState) => {
     dispatch(fetchIssuesRequest());
     request.then(
       (response) => {
-        const linkData = buildLinkDataFromLinkHeader(response.headers.link);
+        const linkState = buildLinkStateFromLinkHeader(response.headers.link);
         const payload = {
           data: response.data,
-          link: linkData,
+          link: linkState,
         };
         dispatch(fetchIssuesSuccess(payload));
       },

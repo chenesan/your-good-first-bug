@@ -2,7 +2,6 @@ import { CHANGE_ISSUES_SELECTOR, CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST,
   FETCH_ISSUES_SUCCESS } from '../actions/';
 
 export const NO_NEXT_LINK = 'NO_NEXT_LINK';
-export const UNKNOWN_LINK = 'UNKNOWN_LINK';
 
 const initialState = {
   issueListIds: [],
