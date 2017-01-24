@@ -12,33 +12,31 @@ class IssueItem extends Component {
     const time = this.props.issueData.createdAt.split('T')[0];
     const headLines = this.getHeadLinesOfBody(this.props.issueData.body, HEAD_LINES_NUMBER);
     return (
-      <div className="col col-xs-12 col-sm-6">
-        <article className="issue-item">
-          <h3 className="title">
-            <a href={this.props.issueData.url} className="issue">
-              {this.props.issueData.title}
-            </a>
-          </h3>
-          <section className="content">
-            <blockquote className="description">
-              <Markdown source={headLines} />
-            </blockquote>
-            <a href={this.props.issueData.url} className="more">See more</a>
-            <a href={this.props.issueData.project.url} className="project">
-              {this.props.issueData.project.name}
-            </a>
-            <div className="projectDescription">{this.props.issueData.project.description}</div>
-            <div className="languages">
-              {
-                this.props.issueData.languages.map(
-                  (language) => <span className="language">{language}</span>
-                )
-              }
-            </div>
-            <time className="time">{time}</time>
-          </section>
-        </article>
-      </div>
+      <article className="issue-item">
+        <h3 className="title">
+          <a href={this.props.issueData.url} className="issue">
+            {this.props.issueData.title}
+          </a>
+        </h3>
+        <section className="content">
+          <blockquote className="description">
+            <Markdown source={headLines} />
+          </blockquote>
+          <a href={this.props.issueData.url} className="more">See more</a>
+          <a href={this.props.issueData.project.url} className="project">
+            {this.props.issueData.project.name}
+          </a>
+          <div className="projectDescription">{this.props.issueData.project.description}</div>
+          <div className="languages">
+            {
+              this.props.issueData.languages.map(
+                (language) => <span className="language">{language}</span>
+              )
+            }
+          </div>
+          <time className="time">{time}</time>
+        </section>
+      </article>
     );
   }
 }

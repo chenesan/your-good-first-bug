@@ -25,6 +25,10 @@
       > .content {
         width: 100%;
       }
+
+      > .content > .issue-item {
+        width: calc(100% - 20px * 2);
+      }
     }
 
     > .main-menu {
@@ -59,6 +63,17 @@
     > .main-content {
       > .content {
         width: calc(100% - #{$menu-width});
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      > .content > .issue-item {
+        flex-basis: auto;
+        width: calc((100% - 20px * 3) / 2);
+        margin-right: 20px;
+        &:nth-child(even) {
+          margin-left: 0px;
+        }
       }
     }
   }
