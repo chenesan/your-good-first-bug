@@ -1,18 +1,24 @@
 import axios from 'axios';
 import { buildIssuesRequest } from '../reducers';
-import { isFetching, hasReachedPageEnd } from '../reducers/data';
+import { isFetching, hasReachedPageEnd, NO_NEXT_LINK } from '../reducers/data';
 
-function getDataFromLinkHeader(link) {
+function buildLinkDataFromLinkHeader(linkHeader) {
   const data = {};
-  if (link) {
-    link.split(',').forEach(line => {
+  const state = {};
+  if (linkHeader) {
+    linkHeader.split(',').forEach(line => {
       const [urlSeg, relSeg] = line.split(';').map(val => val.trim());
       const url = urlSeg.slice(1, -1);
       const rel = relSeg.split('=')[1].slice(1, -1);
       data[rel] = url;
     });
+    state.next = data.next || NO_NEXT_LINK;
+    state.isEnd = !data.last;
+  } else {
+    state.next = NO_NEXT_LINK;
+    state.isEnd = true;
   }
-  return data;
+  return state;
 }
 
 export const CLEAN_ISSUE_DATA = 'CLEAN_ISSUE_DATA';
@@ -38,7 +44,7 @@ export const fetchIssuesSuccess = (payload) => {
   const action = {
     type: FETCH_ISSUES_SUCCESS,
     data: payload.data,
-    next: payload.next,
+    link: payload.link,
   };
   return action;
 };
@@ -62,9 +68,10 @@ export const fetchIssues = () => (dispatch, getState) => {
     dispatch(fetchIssuesRequest());
     request.then(
       (response) => {
+        const linkData = buildLinkDataFromLinkHeader(response.headers.link);
         const payload = {
           data: response.data,
-          next: getDataFromLinkHeader(response.headers.link).next,
+          link: linkData,
         };
         dispatch(fetchIssuesSuccess(payload));
       },

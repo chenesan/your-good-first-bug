@@ -39,7 +39,7 @@ class App extends Component {
     if (typeof document !== 'undefined') {
       const { height } = document.querySelector('.main-content').getBoundingClientRect();
       const { pageY } = event;
-      if (height * 0.8 < pageY) {
+      if (height * 0.8 < pageY && !this.props.hasReachedPageEnd) {
         this.props.loadIssueList();
       }
     }
@@ -83,6 +83,7 @@ class App extends Component {
 
 App.propTypes = {
   fetching: React.PropTypes.bool.isRequired,
+  hasReachedPageEnd: React.PropTypes.bool.isRequired,
   issueList: React.PropTypes.arrayOf((propVal, key) => {
     // todo: validator
     if (!propVal.title) {

@@ -2,6 +2,7 @@ import { CHANGE_ISSUES_SELECTOR, CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST,
   FETCH_ISSUES_SUCCESS } from '../actions/';
 
 export const NO_NEXT_LINK = 'NO_NEXT_LINK';
+export const UNKNOWN_LINK = 'UNKNOWN_LINK';
 
 const initialState = {
   issueListIds: [],
@@ -10,7 +11,8 @@ const initialState = {
     fetching: false,
     link: {
       root: '/api/v1/issues',
-      next: NO_NEXT_LINK,
+      next: '/api/v1/issues',
+      isEnd: false,
     },
   },
 };
@@ -18,7 +20,11 @@ const initialState = {
 const changeStatus = (status, option) => {
   const updatedStatus = {
     fetching: option.fetching !== undefined ? option.fetching : status.fetching,
-    link: Object.assign({}, status.link, { next: option.next ? option.next : NO_NEXT_LINK }),
+    link: option.link ?
+      Object.assign({}, status.link, {
+        next: option.link.next,
+        isEnd: option.link.isEnd,
+      }) : status.link,
   };
   return Object.assign({}, status, updatedStatus);
 };
@@ -64,9 +70,6 @@ export const data = (state = initialState, action) => {
     case FETCH_ISSUES_REQUEST: {
       const nextStatus = changeStatus(state.status, {
         fetching: true,
-        link: {
-          next: action.next,
-        },
       });
       const nextState = Object.assign({}, state, {
         status: nextStatus,
@@ -74,7 +77,13 @@ export const data = (state = initialState, action) => {
       return nextState;
     }
     case FETCH_ISSUES_SUCCESS: {
-      const nextStatus = changeStatus(state.status, { fetching: false, next: action.next });
+      const nextStatus = changeStatus(
+        state.status,
+        {
+          fetching: false,
+          link: action.link,
+        }
+      );
       const nextState = Object.assign(
         addIssueData(state, action),
         { status: nextStatus }
@@ -86,7 +95,14 @@ export const data = (state = initialState, action) => {
       return nextState;
     }
     case CHANGE_ISSUES_SELECTOR: {
-      const nextStatus = changeStatus(state.status, { next: initialState.status.link.next });
+      const nextStatus = changeStatus(
+        state.status,
+        {
+          link: {
+            next: initialState.status.link.next,
+            isEnd: false,
+          },
+        });
       const nextState = Object.assign({}, state, { status: nextStatus });
       return nextState;
     }
@@ -99,11 +115,13 @@ export const data = (state = initialState, action) => {
 
 export const isFetching = (state) => state.status.fetching;
 export const hasReachedPageEnd = (state) => {
-  return false;
+  return state.status.link.isEnd;
 };
 export const getNextLink = (state) => (
   state.status.link.next === NO_NEXT_LINK ? null : state.status.link.next
 );
 export const getRootUrl = (state) => state.status.link.root;
-
+export const hasReadLink = (state) => {
+  return false;
+};
 export default data;
