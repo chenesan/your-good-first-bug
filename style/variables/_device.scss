@@ -22,6 +22,9 @@
     > .main-content {
       position: absolute;
       top: 120px;
+      > .content {
+        width: 100%;
+      }
     }
 
     > .main-menu {
@@ -52,5 +55,13 @@
     > .main-menu {
       display: none;
     }
+
+    > .main-content {
+      > .content {
+        width: calc(100% - #{$menu-width});
+      }
+    }
   }
+
+
 }

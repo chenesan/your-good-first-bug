@@ -60,7 +60,7 @@ class App extends Component {
             selectors={this.props.selectors}
             selectorChangeHandler={this.props.selectorChangeHandler}
           />
-          <div className="content col-xs-12 col-sm-10">
+          <div className="content">
             {
               this.props.issueList.map((issueData) => (
                 <IssueItem issueData={issueData} />
