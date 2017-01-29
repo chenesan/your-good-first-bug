@@ -6,18 +6,27 @@
   overflow-x: auto;
 
   > .title {
+    font-family: Helvetica;
     font-size: 2em;
     margin-top: 0;
+    margin-bottom: 10px;
   }
 
   > .content {
 
+    > .description {
+      margin-bottom: 5px;
+    }
+
     > .more {
-      margin-top: -10px;
-      display: block;
+      display: table;
+      width: 80px;
+      color: theme-color(link);
     }
 
     > .project {
+      display: inline-block;
+      margin-top: 20px;
       font-size: 1.5em;
     }
 
@@ -26,6 +35,8 @@
     }
 
     > .time {
+      display: inline-block;
+      margin-top: 10px;
       font-size: 0.8em;
     }
   }
