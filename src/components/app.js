@@ -9,7 +9,7 @@ class App extends Component {
     super();
     this.handleClickOnMenuButton = this.handleClickOnMenuButton.bind(this);
     this.handleScrolling = this.handleScrolling.bind(this);
-    this.handleClickOnContent = this.handleClickOnContent.bind(this);
+    this.toggleOffSideMenu = this.toggleOffSideMenu.bind(this);
     this.state = {
       showSideBar: false,
     };
@@ -28,7 +28,7 @@ class App extends Component {
       }));
     }
   }
-  handleClickOnContent() {
+  toggleOffSideMenu(e) {
     if (this.state.showSideBar) {
       this.setState(Object.assign({}, this.state, {
         showSideBar: false,
@@ -55,7 +55,7 @@ class App extends Component {
           showSideBarButton={!this.state.showSideBar}
           menuButtonClickHandler={this.handleClickOnMenuButton}
         />
-        <div className="main-content container" onClick={this.handleClickOnContent}>
+        <div className="main-content container" onClick={this.toggleOffSideMenu}>
           <Menu
             selectors={this.props.selectors}
             selectorChangeHandler={this.props.selectorChangeHandler}
