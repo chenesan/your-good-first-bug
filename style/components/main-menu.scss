@@ -1,6 +1,6 @@
 .main-menu {
   width: $menu-width;
-  padding-left: 20px;
+  padding: 0px 20px;
   &.-side {
     position: fixed;
     left: 0px;
@@ -14,5 +14,9 @@
   &.-hide {
     left: $menu-width * -1;
     transition: left 1s;
+  }
+
+  > .sub-selectors {
+    margin-top: 20px;
   }
 }

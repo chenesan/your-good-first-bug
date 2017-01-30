@@ -14,7 +14,7 @@ class SubSelectors extends Component {
   }
   render() {
     return (
-      <div className={`sub-selectors ${this.props.name}`}>
+      <div className={`sub-selectors ${this.props.propName}`}>
         <h4 className="title">{this.props.name}</h4>
         {
           Object.keys(this.props.selectors).map(

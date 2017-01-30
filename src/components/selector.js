@@ -18,7 +18,7 @@ class Selector extends Component {
   }
   render() {
     return (
-      <div className="selection">
+      <div className="menu-selector">
         <h5 className="name">{this.props.name}</h5>
         <select
           name="condition" className="options"
