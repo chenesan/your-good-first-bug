@@ -2,11 +2,10 @@ $menu-top: 0px;
 $menu-left: 0px;
 
 .menu-button {
-  background-color: gray;
+  background: theme-color(menu);
   width: 120px;
   height: 120px;
   cursor: pointer;
-  border-color: gray;
   display: flex;
 
   > .icon {

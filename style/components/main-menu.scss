@@ -1,13 +1,14 @@
 .main-menu {
   width: $menu-width;
   padding: 0px 20px;
+  background: theme-color(menu);
   &.-side {
     position: fixed;
     left: 0px;
     top: 0px;
     height: 100vh;
     transition: left 1s;
-    background-color: theme-color(menu);
+    background: theme-color(menu);
     z-index: map-get($z-index, sideMenu);
   }
 

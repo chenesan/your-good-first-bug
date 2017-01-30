@@ -1,10 +1,10 @@
 .main-content {
-  padding-top: 25px;
   width: 100%;
   display: flex;
 
   > .content {
     flex-basis: auto;
+    padding-top: 25px;
   }
 
   > .main-menu {
