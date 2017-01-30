@@ -89,6 +89,13 @@
 	  middlewares.push((0, _reduxLogger2.default)());
 	}
 	
+	if (typeof sessionStorage !== 'undefined') {
+	  var issueSelector = JSON.parse(window.sessionStorage.getItem('issueSelector'));
+	  if (issueSelector) {
+	    window.__PRELOADED_STATE__.issueSelectors = issueSelector;
+	  }
+	}
+	
 	var store = (0, _redux.createStore)(_reducers2.default, typeof window === 'undefined' ? undefined : window.__PRELOADED_STATE__, _redux.applyMiddleware.apply(undefined, middlewares));
 	
 	_reactDom2.default.render(_react2.default.createElement(
@@ -22421,7 +22428,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.getRootUrl = exports.getNextLink = exports.isFetching = exports.data = exports.NO_NEXT_LINK = undefined;
+	exports.hasReadLink = exports.getRootUrl = exports.getNextLink = exports.hasReachedPageEnd = exports.isFetching = exports.data = exports.NO_NEXT_LINK = undefined;
 	
 	var _actions = __webpack_require__(192);
 	
@@ -22436,7 +22443,8 @@
 	    fetching: false,
 	    link: {
 	      root: '/api/v1/issues',
-	      next: NO_NEXT_LINK
+	      next: '/api/v1/issues',
+	      isEnd: false
 	    }
 	  }
 	};
@@ -22444,7 +22452,10 @@
 	var changeStatus = function changeStatus(status, option) {
 	  var updatedStatus = {
 	    fetching: option.fetching !== undefined ? option.fetching : status.fetching,
-	    link: Object.assign({}, status.link, { next: option.next ? option.next : NO_NEXT_LINK })
+	    link: option.link ? Object.assign({}, status.link, {
+	      next: option.link.next,
+	      isEnd: option.link.isEnd
+	    }) : status.link
 	  };
 	  return Object.assign({}, status, updatedStatus);
 	};
@@ -22493,10 +22504,7 @@
 	    case _actions.FETCH_ISSUES_REQUEST:
 	      {
 	        var nextStatus = changeStatus(state.status, {
-	          fetching: true,
-	          link: {
-	            next: action.next
-	          }
+	          fetching: true
 	        });
 	        var nextState = Object.assign({}, state, {
 	          status: nextStatus
@@ -22505,7 +22513,10 @@
 	      }
 	    case _actions.FETCH_ISSUES_SUCCESS:
 	      {
-	        var _nextStatus = changeStatus(state.status, { fetching: false, next: action.next });
+	        var _nextStatus = changeStatus(state.status, {
+	          fetching: false,
+	          link: action.link
+	        });
 	        var _nextState = Object.assign(addIssueData(state, action), { status: _nextStatus });
 	        return _nextState;
 	      }
@@ -22516,7 +22527,12 @@
 	      }
 	    case _actions.CHANGE_ISSUES_SELECTOR:
 	      {
-	        var _nextStatus2 = changeStatus(state.status, { next: initialState.status.link.next });
+	        var _nextStatus2 = changeStatus(state.status, {
+	          link: {
+	            next: initialState.status.link.next,
+	            isEnd: false
+	          }
+	        });
 	        var _nextState3 = Object.assign({}, state, { status: _nextStatus2 });
 	        return _nextState3;
 	      }
@@ -22530,13 +22546,18 @@
 	var isFetching = exports.isFetching = function isFetching(state) {
 	  return state.status.fetching;
 	};
+	var hasReachedPageEnd = exports.hasReachedPageEnd = function hasReachedPageEnd(state) {
+	  return state.status.link.isEnd;
+	};
 	var getNextLink = exports.getNextLink = function getNextLink(state) {
 	  return state.status.link.next === NO_NEXT_LINK ? null : state.status.link.next;
 	};
 	var getRootUrl = exports.getRootUrl = function getRootUrl(state) {
 	  return state.status.link.root;
 	};
-	
+	var hasReadLink = exports.hasReadLink = function hasReadLink(state) {
+	  return false;
+	};
 	var _default = data;
 	exports.default = _default;
 	;
@@ -22552,9 +22573,13 @@
 	
 	  __REACT_HOT_LOADER__.register(isFetching, 'isFetching', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
 	
+	  __REACT_HOT_LOADER__.register(hasReachedPageEnd, 'hasReachedPageEnd', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
+	
 	  __REACT_HOT_LOADER__.register(getNextLink, 'getNextLink', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
 	
 	  __REACT_HOT_LOADER__.register(getRootUrl, 'getRootUrl', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
+	
+	  __REACT_HOT_LOADER__.register(hasReadLink, 'hasReadLink', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
 	
 	  __REACT_HOT_LOADER__.register(initialState, 'initialState', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
 	
@@ -22594,10 +22619,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function getDataFromLinkHeader(link) {
+	function buildLinkStateFromLinkHeader(linkHeader) {
 	  var data = {};
-	  if (link) {
-	    link.split(',').forEach(function (line) {
+	  var state = {};
+	  if (linkHeader) {
+	    linkHeader.split(',').forEach(function (line) {
 	      var _line$split$map = line.split(';').map(function (val) {
 	        return val.trim();
 	      });
@@ -22611,8 +22637,16 @@
 	      var rel = relSeg.split('=')[1].slice(1, -1);
 	      data[rel] = url;
 	    });
+	    state.next = data.next || _data.NO_NEXT_LINK;
+	    state.isEnd = !data.last;
+	  } else {
+	    // There's no link header in response
+	    // That means the result of query has only one or zero page, and we reached
+	    // the end.
+	    state.next = _data.NO_NEXT_LINK;
+	    state.isEnd = true;
 	  }
-	  return data;
+	  return state;
 	}
 	
 	var CLEAN_ISSUE_DATA = exports.CLEAN_ISSUE_DATA = 'CLEAN_ISSUE_DATA';
@@ -22640,7 +22674,7 @@
 	  var action = {
 	    type: FETCH_ISSUES_SUCCESS,
 	    data: payload.data,
-	    next: payload.next
+	    link: payload.link
 	  };
 	  return action;
 	};
@@ -22660,7 +22694,7 @@
 	var fetchIssues = exports.fetchIssues = function fetchIssues() {
 	  return function (dispatch, getState) {
 	    var state = getState();
-	    if ((0, _data.isFetching)(state.data)) {
+	    if ((0, _data.isFetching)(state.data) || (0, _data.hasReachedPageEnd)(state.data)) {
 	      return;
 	    } else {
 	      var _buildIssuesRequest = (0, _reducers.buildIssuesRequest)(state);
@@ -22672,9 +22706,10 @@
 	      var request = _axios2.default.get(url, config);
 	      dispatch(fetchIssuesRequest());
 	      request.then(function (response) {
+	        var linkState = buildLinkStateFromLinkHeader(response.headers.link);
 	        var payload = {
 	          data: response.data,
-	          next: getDataFromLinkHeader(response.headers.link).next
+	          link: linkState
 	        };
 	        dispatch(fetchIssuesSuccess(payload));
 	      }, function (err) {
@@ -22701,7 +22736,7 @@
 	    return;
 	  }
 	
-	  __REACT_HOT_LOADER__.register(getDataFromLinkHeader, 'getDataFromLinkHeader', '/Users/yishan/Documents/Projects/your-good-first-bug/src/actions/index.js');
+	  __REACT_HOT_LOADER__.register(buildLinkStateFromLinkHeader, 'buildLinkStateFromLinkHeader', '/Users/yishan/Documents/Projects/your-good-first-bug/src/actions/index.js');
 	
 	  __REACT_HOT_LOADER__.register(CLEAN_ISSUE_DATA, 'CLEAN_ISSUE_DATA', '/Users/yishan/Documents/Projects/your-good-first-bug/src/actions/index.js');
 	
@@ -24216,7 +24251,6 @@
 	var getSelectors = exports.getSelectors = function getSelectors(state) {
 	  return state;
 	};
-	
 	var _default = issueSelectors;
 	exports.default = _default;
 	;
@@ -24275,6 +24309,7 @@
 	  return {
 	    issueList: (0, _reducers.getIssueList)(state),
 	    fetching: (0, _data.isFetching)(state.data),
+	    hasReachedPageEnd: (0, _data.hasReachedPageEnd)(state.data),
 	    selectors: (0, _issueSelectors.getSelectors)(state.issueSelectors)
 	  };
 	};
@@ -24364,8 +24399,9 @@
 	
 	    _this.handleClickOnMenuButton = _this.handleClickOnMenuButton.bind(_this);
 	    _this.handleScrolling = _this.handleScrolling.bind(_this);
+	    _this.toggleOffSideMenu = _this.toggleOffSideMenu.bind(_this);
 	    _this.state = {
-	      showMenu: false
+	      showSideBar: false
 	    };
 	    return _this;
 	  }
@@ -24378,13 +24414,22 @@
 	  }, {
 	    key: 'handleClickOnMenuButton',
 	    value: function handleClickOnMenuButton() {
-	      if (!this.state.showMenu) {
+	      if (!this.state.showSideBar) {
 	        this.setState(Object.assign({}, this.state, {
-	          showMenu: true
+	          showSideBar: true
 	        }));
 	      } else {
 	        this.setState(Object.assign({}, this.state, {
-	          showMenu: false
+	          showSideBar: false
+	        }));
+	      }
+	    }
+	  }, {
+	    key: 'toggleOffSideMenu',
+	    value: function toggleOffSideMenu(e) {
+	      if (this.state.showSideBar) {
+	        this.setState(Object.assign({}, this.state, {
+	          showSideBar: false
 	        }));
 	      }
 	    }
@@ -24392,12 +24437,12 @@
 	    key: 'handleScrolling',
 	    value: function handleScrolling(event) {
 	      if (typeof document !== 'undefined') {
-	        var _document$body$getBou = document.body.getBoundingClientRect();
+	        var _document$querySelect = document.querySelector('.main-content').getBoundingClientRect();
 	
-	        var height = _document$body$getBou.height;
-	
+	        var height = _document$querySelect.height;
 	        var pageY = event.pageY;
-	        if (height * 0.8 < pageY) {
+	
+	        if (height * 0.8 < pageY && !this.props.hasReachedPageEnd) {
 	          this.props.loadIssueList();
 	        }
 	      }
@@ -24411,36 +24456,31 @@
 	          className: 'main-app',
 	          onScroll: this.handleScrolling, onWheel: this.handleScrolling
 	        },
-	        _react2.default.createElement(_jumbotron2.default, { title: 'Your Good First Bug' }),
+	        _react2.default.createElement(_jumbotron2.default, {
+	          title: 'Your Good First Bug',
+	          showSideBarButton: !this.state.showSideBar,
+	          menuButtonClickHandler: this.handleClickOnMenuButton
+	        }),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'main-content container' },
+	          { className: 'main-content container', onClick: this.toggleOffSideMenu },
 	          _react2.default.createElement(_menu2.default, {
-	            gridClass: 'col-sm-2',
 	            selectors: this.props.selectors,
 	            selectorChangeHandler: this.props.selectorChangeHandler
 	          }),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'content col-xs-12 col-sm-10' },
+	            { className: 'content' },
 	            this.props.issueList.map(function (issueData) {
 	              return _react2.default.createElement(_issueItem2.default, { issueData: issueData });
 	            })
 	          )
 	        ),
 	        _react2.default.createElement(_menu2.default, {
-	          hide: !this.state.showMenu, gridClass: 'col-xs-4', side: true,
+	          hide: !this.state.showSideBar, side: true,
 	          selectors: this.props.selectors,
 	          selectorChangeHandler: this.props.selectorChangeHandler
 	        }),
-	        _react2.default.createElement(
-	          'button',
-	          {
-	            className: 'menu-button' + (this.state.showMenu ? ' -hide' : ' -side'),
-	            onClick: this.handleClickOnMenuButton
-	          },
-	          'button'
-	        ),
 	        this.props.fetching ? _react2.default.createElement(_loadingTip2.default, null) : false
 	      );
 	    }
@@ -24451,6 +24491,7 @@
 	
 	App.propTypes = {
 	  fetching: _react2.default.PropTypes.bool.isRequired,
+	  hasReachedPageEnd: _react2.default.PropTypes.bool.isRequired,
 	  issueList: _react2.default.PropTypes.arrayOf(function (propVal, key) {
 	    // todo: validator
 	    if (!propVal.title) {
@@ -24507,6 +24548,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	var HEAD_LINES_NUMBER = 3;
+	
 	var IssueItem = function (_Component) {
 	  _inherits(IssueItem, _Component);
 	
@@ -24517,58 +24560,60 @@
 	  }
 	
 	  _createClass(IssueItem, [{
+	    key: 'getHeadLinesOfBody',
+	    value: function getHeadLinesOfBody(body, lineNumber) {
+	      var lines = body.split('\n');
+	      return lines.slice(0, lineNumber).join('\n');
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var time = this.props.issueData.createdAt.split('T')[0];
+	      var headLines = this.getHeadLinesOfBody(this.props.issueData.body, HEAD_LINES_NUMBER);
 	      return _react2.default.createElement(
-	        'div',
-	        { className: 'col col-xs-12 col-sm-6' },
+	        'article',
+	        { className: 'issue-item' },
 	        _react2.default.createElement(
-	          'article',
-	          { className: 'issue-item' },
+	          'h3',
+	          { className: 'title' },
 	          _react2.default.createElement(
-	            'h3',
-	            { className: 'title' },
-	            _react2.default.createElement(
-	              'a',
-	              { href: this.props.issueData.url, className: 'issue' },
-	              this.props.issueData.title
-	            )
+	            'a',
+	            { href: this.props.issueData.url, className: 'issue' },
+	            this.props.issueData.title
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'section',
+	          { className: 'content' },
+	          _react2.default.createElement(
+	            'blockquote',
+	            { className: 'description' },
+	            _react2.default.createElement(_reactRemarkable2.default, { source: headLines })
 	          ),
 	          _react2.default.createElement(
-	            'section',
-	            { className: 'content' },
-	            _react2.default.createElement(
-	              'blockquote',
-	              { className: 'description' },
-	              _react2.default.createElement(_reactRemarkable2.default, { source: this.props.issueData.body })
-	            ),
-	            _react2.default.createElement(
-	              'a',
-	              { href: this.props.issueData.project.url, className: 'project' },
-	              this.props.issueData.project.name
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'projectDescription' },
-	              this.props.issueData.project.description
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'languages' },
-	              this.props.issueData.languages.map(function (language) {
-	                return _react2.default.createElement(
-	                  'span',
-	                  { className: 'language' },
-	                  language
-	                );
-	              })
-	            ),
-	            _react2.default.createElement(
-	              'time',
-	              { className: 'time' },
-	              time
-	            )
+	            'a',
+	            { href: this.props.issueData.url, className: 'more' },
+	            'See more'
+	          ),
+	          _react2.default.createElement(
+	            'a',
+	            { href: this.props.issueData.project.url, className: 'project' },
+	            this.props.issueData.project.name
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'projectDescription' },
+	            this.props.issueData.project.description
+	          ),
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'language' },
+	            this.props.issueData.languages[0] || 'Unknown'
+	          ),
+	          _react2.default.createElement(
+	            'time',
+	            { className: 'time' },
+	            time
 	          )
 	        )
 	      );
@@ -24603,6 +24648,8 @@
 	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
 	    return;
 	  }
+	
+	  __REACT_HOT_LOADER__.register(HEAD_LINES_NUMBER, 'HEAD_LINES_NUMBER', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/issue-item.js');
 	
 	  __REACT_HOT_LOADER__.register(IssueItem, 'IssueItem', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/issue-item.js');
 	
@@ -35055,7 +35102,7 @@
 /* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -35085,15 +35132,28 @@
 	  }
 	
 	  _createClass(Jumbotron, [{
-	    key: "render",
+	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
-	        "header",
-	        { className: "main-jumbotron" },
+	        'header',
+	        { className: 'main-jumbotron' },
 	        _react2.default.createElement(
-	          "h1",
-	          { className: "title" },
-	          this.props.title
+	          'div',
+	          {
+	            className: 'menu-button' + (this.props.showSideBarButton ? ' -side' : ' -hide'),
+	            onClick: this.props.menuButtonClickHandler
+	          },
+	          _react2.default.createElement('img', { src: 'assets/images/icons/menu.svg', alt: 'menu', className: 'icon' })
+	        ),
+	        _react2.default.createElement(
+	          'h1',
+	          { className: 'title' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'text' },
+	            this.props.title
+	          ),
+	          _react2.default.createElement('img', { src: 'assets/images/title.png', alt: this.props.title, className: 'fontImage' })
 	        )
 	      );
 	    }
@@ -35103,7 +35163,9 @@
 	}(_react.Component);
 	
 	Jumbotron.propTypes = {
-	  title: _react2.default.PropTypes.string.isRequired
+	  showSideBarButton: _react2.default.PropTypes.bool.isRequired,
+	  title: _react2.default.PropTypes.string.isRequired,
+	  menuButtonClickHandler: _react2.default.PropTypes.func.isRequired
 	};
 	
 	var _default = Jumbotron;
@@ -35115,9 +35177,9 @@
 	    return;
 	  }
 	
-	  __REACT_HOT_LOADER__.register(Jumbotron, "Jumbotron", "/Users/yishan/Documents/Projects/your-good-first-bug/src/components/jumbotron.js");
+	  __REACT_HOT_LOADER__.register(Jumbotron, 'Jumbotron', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/jumbotron.js');
 	
-	  __REACT_HOT_LOADER__.register(_default, "default", "/Users/yishan/Documents/Projects/your-good-first-bug/src/components/jumbotron.js");
+	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/jumbotron.js');
 	})();
 
 	;
@@ -35225,9 +35287,23 @@
 	  }
 	
 	  _createClass(Menu, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      if (typeof window !== 'undefined' && !window.sessionStorage.getItem('issueSelector')) {
+	        window.sessionStorage.setItem('issueSelector', JSON.stringify(this.props.selectors));
+	      }
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      if (this.props.selectors !== nextProps.selectors) {
+	        window.sessionStorage.setItem('issueSelector', JSON.stringify(nextProps.selectors));
+	      }
+	    }
+	  }, {
 	    key: 'getClassName',
 	    value: function getClassName() {
-	      var classList = ['main-menu', this.props.gridClass];
+	      var classList = ['main-menu'];
 	      if (this.props.side) {
 	        classList.push('-side');
 	      }
@@ -35249,11 +35325,11 @@
 	        'aside',
 	        { className: className },
 	        _react2.default.createElement(_subSelectors2.default, {
-	          name: 'sorter', selectors: this.props.selectors.sorter,
+	          name: 'Sorter', propName: 'sorter', selectors: this.props.selectors.sorter,
 	          selectorChangeHandler: this.selectorChangeHandler
 	        }),
 	        _react2.default.createElement(_subSelectors2.default, {
-	          name: 'filter', selectors: this.props.selectors.filter,
+	          name: 'Filter', propName: 'filter', selectors: this.props.selectors.filter,
 	          selectorChangeHandler: this.selectorChangeHandler
 	        })
 	      );
@@ -35265,7 +35341,6 @@
 	
 	Menu.propTypes = {
 	  side: _react2.default.PropTypes.bool.isRequired,
-	  gridClass: _react2.default.PropTypes.string.isRequired,
 	  hide: _react2.default.PropTypes.bool.isRequired,
 	  selectorChangeHandler: _react2.default.PropTypes.func.isRequired,
 	  selectors: _react2.default.PropTypes.shape({
@@ -35335,7 +35410,7 @@
 	  _createClass(SubSelectors, [{
 	    key: 'changeHandler',
 	    value: function changeHandler(change) {
-	      var wrappedChange = _defineProperty({}, this.props.name, change);
+	      var wrappedChange = _defineProperty({}, this.props.propName, change);
 	      this.props.selectorChangeHandler(wrappedChange);
 	    }
 	  }, {
@@ -35345,18 +35420,20 @@
 	
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'sub-selectors ' + this.props.name },
+	        { className: 'sub-selectors ' + this.props.propName },
 	        _react2.default.createElement(
 	          'h4',
 	          { className: 'title' },
 	          this.props.name
 	        ),
 	        Object.keys(this.props.selectors).map(function (key, index) {
+	          var selector = _this2.props.selectors[key];
 	          return _react2.default.createElement(_selector2.default, {
 	            key: index,
-	            name: _this2.props.selectors[key].name,
+	            name: selector.name,
 	            propertyName: key,
-	            options: _this2.props.selectors[key].options,
+	            currentValue: selector.options[selector.selectedIndex].value,
+	            options: selector.options,
 	            changeHandler: _this2.changeHandler
 	          });
 	        })
@@ -35369,9 +35446,11 @@
 	
 	SubSelectors.propTypes = {
 	  name: _react2.default.PropTypes.string.isRequired,
+	  propName: _react2.default.PropTypes.string.isRequired,
 	  selectors: _react2.default.PropTypes.shape(_react2.default.PropTypes.shape({
 	    name: _react2.default.PropTypes.string.isRequired,
-	    options: _react2.default.PropTypes.array.isRequired
+	    options: _react2.default.PropTypes.array.isRequired,
+	    selectedIndex: _react2.default.PropTypes.number.isRequired
 	  })).isRequired,
 	  selectorChangeHandler: _react2.default.PropTypes.func.isRequired
 	};
@@ -35444,9 +35523,11 @@
 	  }, {
 	    key: "render",
 	    value: function render() {
+	      var _this2 = this;
+	
 	      return _react2.default.createElement(
 	        "div",
-	        { className: "selection" },
+	        { className: "menu-selector" },
 	        _react2.default.createElement(
 	          "h5",
 	          { className: "name" },
@@ -35454,11 +35535,14 @@
 	        ),
 	        _react2.default.createElement(
 	          "select",
-	          { name: "condition", className: "options", onChange: this.onChangeHandler },
+	          {
+	            name: "condition", className: "options",
+	            onChange: this.onChangeHandler
+	          },
 	          this.props.options.map(function (option) {
 	            return _react2.default.createElement(
 	              "option",
-	              { value: option.value },
+	              { value: option.value, selected: option.value === _this2.props.currentValue },
 	              option.description || option.value
 	            );
 	          })
@@ -35476,6 +35560,7 @@
 	    value: _react2.default.PropTypes.string.isRequired,
 	    description: _react2.default.PropTypes.string
 	  })).isRequired,
+	  currentValue: _react2.default.PropTypes.string.isRequired,
 	  propertyName: _react2.default.PropTypes.string.isRequired,
 	  changeHandler: _react2.default.PropTypes.func.isRequired
 	};
