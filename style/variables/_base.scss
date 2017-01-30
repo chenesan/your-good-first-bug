@@ -2,6 +2,9 @@ $menu-width: 225px;
 
 * {
   box-sizing: border-box;
+  // For long text, break it.
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 a:hover {
