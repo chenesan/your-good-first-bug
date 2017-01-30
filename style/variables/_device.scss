@@ -1,21 +1,5 @@
-@media (max-width: 575px) {
-  .main-content > .content {
-    padding: 0px 20px;
-  }
-  .content > .issue-item {
-    width: calc(100% - 20px * 2);
-  }
-}
 
-@media (max-width: 767px) and (min-width: 576px) {
-  .main-content > .content {
-    padding: 0px calc((100% - 500px) / 2);
-  }
-  .content > .issue-item {
-    width: 500px;
-  }
-}
-
+// Layout with menu button
 @media (max-width: 767px) {
   .main-content > .main-menu {
     display: none;
@@ -54,34 +38,7 @@
   }
 }
 
-@media (min-width: 768px) and (max-width: 1030px) {
-  .main-content > .content {
-    padding: 0px calc((100% - 500px - #{$menu-width}) / 2);
-  }
-  .content > .issue-item {
-    width: 500px;
-  }
-}
-
-@media (min-width: 1031px) {
-  .main-content {
-    > .content {
-      width: calc(100% - #{$menu-width});
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    > .content > .issue-item {
-      flex-basis: auto;
-      width: calc((100% - 20px * 3) / 2);
-      margin-right: 20px;
-      &:nth-child(even) {
-        margin-left: 0px;
-      }
-    }
-  }
-}
-
+// Layout without menu button
 @media (min-width: 768px) {
   .main-content > .main-menu {
     display: block;
@@ -104,8 +61,59 @@
     > .main-menu {
       display: none;
     }
-
   }
+}
 
+// With menu button, the smallest size
+// Make issue item width correspond with window width
+@media (max-width: 575px) {
+  .main-content > .content {
+    padding: 0px 20px;
+  }
+  .content > .issue-item {
+    width: calc(100% - 20px * 2);
+  }
+}
 
+// With menu button, but now the width of .main-content is large enough
+// The issue item will be ugly when the width is too long
+// So we fix the width of issue item and change padding of .content container
+@media (max-width: 767px) and (min-width: 576px) {
+  .main-content > .content {
+    padding: 0px calc((100% - 500px) / 2);
+  }
+  .content > .issue-item {
+    width: 500px;
+  }
+}
+
+// Now window width is so large that we don't need to hide side bar
+// We have to subtract side bar menu width when calc padding of .content
+@media (min-width: 768px) and (max-width: 1030px) {
+  .main-content > .content {
+    padding: 0px calc((100% - 500px - #{$menu-width}) / 2);
+  }
+  .content > .issue-item {
+    width: 500px;
+  }
+}
+
+// Now we contain two issue item in each row with flex
+@media (min-width: 1031px) {
+  .main-content {
+    > .content {
+      width: calc(100% - #{$menu-width});
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    > .content > .issue-item {
+      flex-basis: auto;
+      width: calc((100% - 20px * 3) / 2);
+      margin-right: 20px;
+      &:nth-child(even) {
+        margin-left: 0px;
+      }
+    }
+  }
 }
