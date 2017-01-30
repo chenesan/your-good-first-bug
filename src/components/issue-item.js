@@ -27,13 +27,12 @@ class IssueItem extends Component {
             {this.props.issueData.project.name}
           </a>
           <div className="projectDescription">{this.props.issueData.project.description}</div>
-          <div className="languages">
-            {
-              this.props.issueData.languages.map(
-                (language) => <span className="language">{language}</span>
-              )
-            }
-          </div>
+          {
+            // Usually there are more than one language in a project
+            // Here we only show the first one (the most frequently used one)
+            // If no data, just show 'unknown'
+          }
+          <span className="language">{this.props.issueData.languages[0] || 'Unknown'}</span>
           <time className="time">{time}</time>
         </section>
       </article>

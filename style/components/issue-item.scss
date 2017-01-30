@@ -1,21 +1,28 @@
 .issue-item {
+  position: relative;
   border-radius: 5px;
   background-color: theme-color(item, background);
-  margin: 10px 20px 10px 20px;
+  margin: 40px 20px 0px 20px;
   padding: 3%;
-  overflow-x: auto;
+  overflow-y: visible;
+
 
   > .title {
     font-family: Helvetica;
     font-size: 2em;
     margin-top: 0;
     margin-bottom: 10px;
+    word-wrap: break-word;
   }
 
   > .content {
 
     > .description {
       margin-bottom: 5px;
+      font-family: Helvetica;
+      font-size: 1em;
+      line-height: 1.1em;
+      overflow-x: auto;
     }
 
     > .more {
@@ -30,7 +37,19 @@
       font-size: 1.5em;
     }
 
-    > .languages {
+    > .language {
+      display: table-cell;
+      position: absolute;
+      top: -30px;
+      right: 8px;
+      background-color: theme-color(language-tag);
+      color: theme-color(language-tag, text);
+      border-radius: 3px 3px 0 0;
+      height: 30px;
+      padding: calc((30px - 1em) / 2) 10px;
+      font-family: Helvetica;
+      font-size: 1em;
+      vertical-align: middle;
       font-size: 1em;
     }
 
