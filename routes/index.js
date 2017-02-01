@@ -22,6 +22,8 @@ const ISSUES_QUERY_OPTIONS = {
   order: Symbol('order'),
 };
 
+const TITLE = 'Your Good First Bug';
+
 function buildHref(req) {
   return `${req.protocol}://${req.headers.host}${req.originalUrl}`;
 }
@@ -133,6 +135,7 @@ var buildOptionsOfSelectors = co.wrap(function*() {
 
 router.get('/', function(req, res, next) {
   const store = createStore(reducers);
+  const title = TITLE;
   buildOptionsOfSelectors().then(
     (selectorOptions) => {
       store.dispatch(updateSelectorOptions(selectorOptions));
@@ -142,7 +145,7 @@ router.get('/', function(req, res, next) {
           <AppContainer />
         </Provider>
       );
-      res.render('index', { html, preloadedState: stateString });
+      res.render('index', { html, preloadedState: stateString, title });
     }
   );
 });
