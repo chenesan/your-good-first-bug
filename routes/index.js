@@ -117,7 +117,7 @@ var buildOptionsOfSelectors = co.wrap(function*() {
       selectorName: 'Sort By',
       options: [
         { value: 'createdAt', description: 'Created Time' },
-        { value: 'popularity' },
+        { value: 'popularity', description: 'Popularity' },
         { value: 'projectSize', description: 'Project Size' },
       ],
     },
