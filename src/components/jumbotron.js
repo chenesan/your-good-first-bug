@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
+import ISvg from './lib/ISvg';
+import MenuButton from './menu-button';
 
 class Jumbotron extends Component {
   render() {
     return (
       <header className="main-jumbotron">
-        <div
-          className={`menu-button${this.props.showSideBarButton ? ' -side' : ' -hide'}`}
-          onClick={this.props.menuButtonClickHandler}
-        >
-          <img src="assets/images/icons/menu.svg" alt="menu" className="icon" />
-        </div>
-        <h1 className="title">
-          <div className="text">{this.props.title}</div>
-          <img src="assets/images/title.png" alt={this.props.title} className="fontImage" />
-        </h1>
+        <MenuButton
+          showSideBarButton={this.props.showSideBarButton}
+          menuButtonClickHandler={this.props.menuButtonClickHandler}
+        />
+        <a className="title" href="http://yourgoodfirstbug.yishan.toys">
+          <img src="assets/banner_small.png" alt={this.props.title} className="fontImage" />
+        </a>
       </header>
     );
   }

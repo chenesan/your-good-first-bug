@@ -2,16 +2,15 @@ $menu-top: 0px;
 $menu-left: 0px;
 
 .menu-button {
-  background: theme-color(menu);
-  width: 120px;
-  height: 120px;
+  background: theme-color(jumbotron);
+  width: 60px;
+  height: 100%;
   cursor: pointer;
   display: flex;
 
   > .icon {
     margin: auto;
-    width: 96px;
-    height: 96px;
+    fill: theme-color(menu, button);
   }
 
   &.-hide {
