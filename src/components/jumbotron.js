@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ISvg from './lib/ISvg';
 import MenuButton from './menu-button';
 
 class Jumbotron extends Component {

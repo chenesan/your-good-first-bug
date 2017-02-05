@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
   entry: [
@@ -7,7 +8,7 @@ module.exports = {
     './src/index.js',
   ],
   output: {
-    path: __dirname + '/public/',
+    path: path.resolve(__dirname, '/public/'),
     publicPath: 'http://localhost:3000/public/',
     filename: 'bundle.js',
   },
