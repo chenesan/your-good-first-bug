@@ -1,12 +1,14 @@
-$title-img-width: 200px;
+$title-img-width: 238px;
+$title-img-height: 60px;
 .main-header {
   height: 60px;
-  // display: flex;
   margin: 0;
   background: theme-color(header);
 
   > .menu-button {
-    // display: flex;
+    position: absolute;
+    top: 0px;
+    right: 0px;
   }
 
   > .title {
@@ -14,9 +16,8 @@ $title-img-width: 200px;
     position: absolute;
     top: 0px;
     left: calc((100% - #{$title-img-width}) / 2);
-    // display: flex;
     text-align: center;
     color: theme-color(header, title);
-    height: 100%;
+    height: $title-img-height;
   }
 }

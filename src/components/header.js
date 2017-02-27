@@ -5,13 +5,13 @@ class Header extends Component {
   render() {
     return (
       <header className="main-header">
+        <a className="title" href="/">
+          <img src="assets/banner.png" alt={this.props.title} className="banner" />
+        </a>
         <MenuButton
           showSideBarButton={this.props.showSideBarButton}
           menuButtonClickHandler={this.props.menuButtonClickHandler}
         />
-        <a className="title" href="/">
-          <img src="assets/banner_small.png" alt={this.props.title} className="fontImage" />
-        </a>
       </header>
     );
   }
