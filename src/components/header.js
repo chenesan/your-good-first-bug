@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import MenuButton from './menu-button';
 
-class Jumbotron extends Component {
+class Header extends Component {
   render() {
     return (
-      <header className="main-jumbotron">
+      <header className="main-header">
         <MenuButton
           showSideBarButton={this.props.showSideBarButton}
           menuButtonClickHandler={this.props.menuButtonClickHandler}
         />
-        <a className="title" href="http://yourgoodfirstbug.yishan.toys">
+        <a className="title" href="/">
           <img src="assets/banner_small.png" alt={this.props.title} className="fontImage" />
         </a>
       </header>
@@ -17,10 +17,10 @@ class Jumbotron extends Component {
   }
 }
 
-Jumbotron.propTypes = {
+Header.propTypes = {
   showSideBarButton: React.PropTypes.bool.isRequired,
   title: React.PropTypes.string.isRequired,
   menuButtonClickHandler: React.PropTypes.func.isRequired,
 };
 
-export default Jumbotron;
+export default Header;

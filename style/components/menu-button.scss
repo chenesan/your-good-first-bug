@@ -1,12 +1,15 @@
 $menu-top: 0px;
 $menu-left: 0px;
+$icon-width: 30px;
+$icon-height: 40px;
+$button-width: 60px;
+$button-height: 60px;
 
 .menu-button {
-  background: theme-color(jumbotron);
-  width: 60px;
-  height: 100%;
+  width: $button-width;
+  height: $button-height;
   cursor: pointer;
-  display: flex;
+  padding: #{($button-height - $icon-height) / 2} #{($button-width - $icon-width) / 2};
 
   > .icon {
     margin: auto;

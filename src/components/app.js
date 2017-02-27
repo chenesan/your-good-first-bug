@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import IssueItem from './issue-item';
-import Jumbotron from './jumbotron';
+import Header from './header';
 import LoadingTip from './loading-tip';
 import Menu from './menu';
 
@@ -50,7 +50,7 @@ class App extends Component {
         className="main-app"
         onScroll={this.handleScrolling} onWheel={this.handleScrolling}
       >
-        <Jumbotron
+        <Header
           title="Your Good First Bug"
           showSideBarButton={!this.state.showSideBar}
           menuButtonClickHandler={this.handleClickOnMenuButton}
