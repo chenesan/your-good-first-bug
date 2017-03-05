@@ -123,7 +123,6 @@ function buildQuery(rawQuery) {
           },
         });
       }
-      console.log(newQuery);
       return newQuery;
     },
     createdAt: (q, createdAt) => {
