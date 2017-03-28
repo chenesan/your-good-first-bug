@@ -29,7 +29,7 @@ export const FETCH_ISSUES_REQUEST = 'FETCH_ISSUES_REQUEST';
 export const FETCH_ISSUES_SUCCESS = 'FETCH_ISSUES_SUCCESS';
 export const FETCH_ISSUES_FAILURE = 'FETCH_ISSUES_FAILURE';
 export const CHANGE_ISSUES_SELECTORS = 'CHANGE_ISSUES_SELECTORS';
-export const UPDATE_SELECTOR_OPTIONS = 'UPDATE_SELECTOR_OPTIONS';
+export const UPDATE_SELECTOR_DATA = 'UPDATE_SELECTOR_DATA';
 
 export const changeSelectors = (changes) => {
   const action = {
@@ -88,10 +88,10 @@ export const fetchIssues = () => (dispatch, getState) => {
   }
 };
 
-export const updateSelectorOptions = (optionsGroup) => {
+export const updateSelectorData = (dataGroup) => {
   const action = {
-    type: UPDATE_SELECTOR_OPTIONS,
-    optionsGroup,
+    type: UPDATE_SELECTOR_DATA,
+    dataGroup,
   };
   return action;
 };
