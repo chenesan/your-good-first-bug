@@ -24558,15 +24558,20 @@
 	
 	  _createClass(IssueItem, [{
 	    key: 'getHeadLinesOfBody',
-	    value: function getHeadLinesOfBody(body, lineNumber) {
-	      var lines = body.split('\n');
-	      return lines.slice(0, lineNumber).join('\n');
+	    value: function getHeadLinesOfBody(data, lineNumber) {
+	      var body = data.body;
+	      if (!body) {
+	        return '';
+	      } else {
+	        var lines = body.split('\n');
+	        return lines.slice(0, lineNumber).join('\n');
+	      }
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var time = this.props.issueData.createdAt.split('T')[0];
-	      var headLines = this.getHeadLinesOfBody(this.props.issueData.body, HEAD_LINES_NUMBER);
+	      var headLines = this.getHeadLinesOfBody(this.props.issueData, HEAD_LINES_NUMBER);
 	      return _react2.default.createElement(
 	        'article',
 	        { className: 'issue-item' },
