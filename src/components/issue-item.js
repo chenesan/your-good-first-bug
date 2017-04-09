@@ -4,13 +4,18 @@ import Markdown from 'react-remarkable';
 const HEAD_LINES_NUMBER = 3;
 
 class IssueItem extends Component {
-  getHeadLinesOfBody(body, lineNumber) {
-    const lines = body.split('\n');
-    return lines.slice(0, lineNumber).join('\n');
+  getHeadLinesOfBody(data, lineNumber) {
+    const body = data.body;
+    if (!body) {
+      return '';
+    } else {
+      const lines = body.split('\n');
+      return lines.slice(0, lineNumber).join('\n');
+    }
   }
   render() {
     const time = this.props.issueData.createdAt.split('T')[0];
-    const headLines = this.getHeadLinesOfBody(this.props.issueData.body, HEAD_LINES_NUMBER);
+    const headLines = this.getHeadLinesOfBody(this.props.issueData, HEAD_LINES_NUMBER);
     return (
       <article className="issue-item">
         <h3 className="title">
