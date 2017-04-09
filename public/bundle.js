@@ -22497,7 +22497,7 @@
 	};
 	
 	var data = exports.data = function data() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
 	  var action = arguments[1];
 	
 	  switch (action.type) {
@@ -22626,12 +22626,10 @@
 	    linkHeader.split(',').forEach(function (line) {
 	      var _line$split$map = line.split(';').map(function (val) {
 	        return val.trim();
-	      });
-	
-	      var _line$split$map2 = _slicedToArray(_line$split$map, 2);
-	
-	      var urlSeg = _line$split$map2[0];
-	      var relSeg = _line$split$map2[1];
+	      }),
+	          _line$split$map2 = _slicedToArray(_line$split$map, 2),
+	          urlSeg = _line$split$map2[0],
+	          relSeg = _line$split$map2[1];
 	
 	      var url = urlSeg.slice(1, -1);
 	      var rel = relSeg.split('=')[1].slice(1, -1);
@@ -22697,10 +22695,9 @@
 	    if ((0, _data.isFetching)(state.data) || (0, _data.hasReachedPageEnd)(state.data)) {
 	      return;
 	    } else {
-	      var _buildIssuesRequest = (0, _reducers.buildIssuesRequest)(state);
-	
-	      var url = _buildIssuesRequest.url;
-	      var query = _buildIssuesRequest.query;
+	      var _buildIssuesRequest = (0, _reducers.buildIssuesRequest)(state),
+	          url = _buildIssuesRequest.url,
+	          query = _buildIssuesRequest.query;
 	
 	      var config = { params: query };
 	      var request = _axios2.default.get(url, config);
@@ -24121,7 +24118,7 @@
 	});
 	exports.getSelectors = exports.buildQuery = exports.getSelectorValue = exports.issueSelectors = undefined;
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _actions = __webpack_require__(192);
 	
@@ -24173,7 +24170,7 @@
 	};
 	
 	var issueSelectors = exports.issueSelectors = function issueSelectors() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
 	  var action = arguments[1];
 	
 	  switch (action.type) {
@@ -24369,15 +24366,15 @@
 	
 	var _issueItem2 = _interopRequireDefault(_issueItem);
 	
-	var _jumbotron = __webpack_require__(281);
+	var _header = __webpack_require__(281);
 	
-	var _jumbotron2 = _interopRequireDefault(_jumbotron);
+	var _header2 = _interopRequireDefault(_header);
 	
-	var _loadingTip = __webpack_require__(282);
+	var _loadingTip = __webpack_require__(284);
 	
 	var _loadingTip2 = _interopRequireDefault(_loadingTip);
 	
-	var _menu = __webpack_require__(283);
+	var _menu = __webpack_require__(285);
 	
 	var _menu2 = _interopRequireDefault(_menu);
 	
@@ -24437,9 +24434,9 @@
 	    key: 'handleScrolling',
 	    value: function handleScrolling(event) {
 	      if (typeof document !== 'undefined') {
-	        var _document$querySelect = document.querySelector('.main-content').getBoundingClientRect();
+	        var _document$querySelect = document.querySelector('.main-content').getBoundingClientRect(),
+	            height = _document$querySelect.height;
 	
-	        var height = _document$querySelect.height;
 	        var pageY = event.pageY;
 	
 	        if (height * 0.8 < pageY && !this.props.hasReachedPageEnd) {
@@ -24456,7 +24453,7 @@
 	          className: 'main-app',
 	          onScroll: this.handleScrolling, onWheel: this.handleScrolling
 	        },
-	        _react2.default.createElement(_jumbotron2.default, {
+	        _react2.default.createElement(_header2.default, {
 	          title: 'Your Good First Bug',
 	          showSideBarButton: !this.state.showSideBar,
 	          menuButtonClickHandler: this.handleClickOnMenuButton
@@ -35114,6 +35111,10 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _menuButton = __webpack_require__(282);
+	
+	var _menuButton2 = _interopRequireDefault(_menuButton);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35122,53 +35123,44 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Jumbotron = function (_Component) {
-	  _inherits(Jumbotron, _Component);
+	var Header = function (_Component) {
+	  _inherits(Header, _Component);
 	
-	  function Jumbotron() {
-	    _classCallCheck(this, Jumbotron);
+	  function Header() {
+	    _classCallCheck(this, Header);
 	
-	    return _possibleConstructorReturn(this, (Jumbotron.__proto__ || Object.getPrototypeOf(Jumbotron)).apply(this, arguments));
+	    return _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).apply(this, arguments));
 	  }
 	
-	  _createClass(Jumbotron, [{
+	  _createClass(Header, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'header',
-	        { className: 'main-jumbotron' },
+	        { className: 'main-header' },
 	        _react2.default.createElement(
-	          'div',
-	          {
-	            className: 'menu-button' + (this.props.showSideBarButton ? ' -side' : ' -hide'),
-	            onClick: this.props.menuButtonClickHandler
-	          },
-	          _react2.default.createElement('img', { src: 'assets/images/icons/menu.svg', alt: 'menu', className: 'icon' })
+	          'a',
+	          { className: 'title', href: '/' },
+	          _react2.default.createElement('img', { src: 'assets/banner.png', alt: this.props.title, className: 'banner' })
 	        ),
-	        _react2.default.createElement(
-	          'h1',
-	          { className: 'title' },
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'text' },
-	            this.props.title
-	          ),
-	          _react2.default.createElement('img', { src: 'assets/images/title.png', alt: this.props.title, className: 'fontImage' })
-	        )
+	        _react2.default.createElement(_menuButton2.default, {
+	          showSideBarButton: this.props.showSideBarButton,
+	          menuButtonClickHandler: this.props.menuButtonClickHandler
+	        })
 	      );
 	    }
 	  }]);
 	
-	  return Jumbotron;
+	  return Header;
 	}(_react.Component);
 	
-	Jumbotron.propTypes = {
+	Header.propTypes = {
 	  showSideBarButton: _react2.default.PropTypes.bool.isRequired,
 	  title: _react2.default.PropTypes.string.isRequired,
 	  menuButtonClickHandler: _react2.default.PropTypes.func.isRequired
 	};
 	
-	var _default = Jumbotron;
+	var _default = Header;
 	exports.default = _default;
 	;
 	
@@ -35177,15 +35169,140 @@
 	    return;
 	  }
 	
-	  __REACT_HOT_LOADER__.register(Jumbotron, 'Jumbotron', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/jumbotron.js');
+	  __REACT_HOT_LOADER__.register(Header, 'Header', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/header.js');
 	
-	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/jumbotron.js');
+	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/header.js');
 	})();
 
 	;
 
 /***/ },
 /* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _threeBars = __webpack_require__(283);
+	
+	var _threeBars2 = _interopRequireDefault(_threeBars);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function MenuButton(props) {
+	  return _react2.default.createElement(
+	    'div',
+	    {
+	      className: 'menu-button' + (props.showSideBarButton ? ' -side' : ' -hide'),
+	      onClick: props.menuButtonClickHandler
+	    },
+	    _react2.default.createElement(_threeBars2.default, { width: 30, height: 40, className: 'icon' })
+	  );
+	}
+	
+	var _default = MenuButton;
+	exports.default = _default;
+	;
+	
+	(function () {
+	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
+	    return;
+	  }
+	
+	  __REACT_HOT_LOADER__.register(MenuButton, 'MenuButton', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/menu-button.js');
+	
+	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/yishan/Documents/Projects/your-good-first-bug/src/components/menu-button.js');
+	})();
+
+	;
+
+/***/ },
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(2);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var ThreeBars = function (_Component) {
+	  _inherits(ThreeBars, _Component);
+	
+	  function ThreeBars() {
+	    _classCallCheck(this, ThreeBars);
+	
+	    return _possibleConstructorReturn(this, (ThreeBars.__proto__ || Object.getPrototypeOf(ThreeBars)).apply(this, arguments));
+	  }
+	
+	  _createClass(ThreeBars, [{
+	    key: "render",
+	    value: function render() {
+	      return _react2.default.createElement(
+	        "svg",
+	        {
+	          xmlns: "http://www.w3.org/2000/svg", className: this.props.className,
+	          width: this.props.width, height: this.props.height, viewBox: "0 0 12 16"
+	        },
+	        _react2.default.createElement("path", { fillRule: "evenodd", d: "M11.41 9H.59C0 9 0 8.59 0 8c0-.59 0-1 .59-1H11.4c.59 0 .59.41.59 1 0 .59 0 1-.59 1h.01zm0-4H.59C0 5 0 4.59 0 4c0-.59 0-1 .59-1H11.4c.59 0 .59.41.59 1 0 .59 0 1-.59 1h.01zM.59 11H11.4c.59 0 .59.41.59 1 0 .59 0 1-.59 1H.59C0 13 0 12.59 0 12c0-.59 0-1 .59-1z" })
+	      );
+	    }
+	  }]);
+	
+	  return ThreeBars;
+	}(_react.Component);
+	
+	ThreeBars.propTypes = {
+	  width: _react2.default.PropTypes.number,
+	  height: _react2.default.PropTypes.number,
+	  className: _react2.default.PropTypes.string
+	};
+	
+	ThreeBars.defaultProps = {
+	  width: 12,
+	  height: 16,
+	  className: ''
+	};
+	
+	var _default = ThreeBars;
+	exports.default = _default;
+	;
+	
+	(function () {
+	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
+	    return;
+	  }
+	
+	  __REACT_HOT_LOADER__.register(ThreeBars, "ThreeBars", "/Users/yishan/Documents/Projects/your-good-first-bug/src/components/icons/three-bars.js");
+	
+	  __REACT_HOT_LOADER__.register(_default, "default", "/Users/yishan/Documents/Projects/your-good-first-bug/src/components/icons/three-bars.js");
+	})();
+
+	;
+
+/***/ },
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -35246,7 +35363,7 @@
 	;
 
 /***/ },
-/* 283 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35261,7 +35378,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _subSelectors = __webpack_require__(284);
+	var _subSelectors = __webpack_require__(286);
 	
 	var _subSelectors2 = _interopRequireDefault(_subSelectors);
 	
@@ -35366,7 +35483,7 @@
 	;
 
 /***/ },
-/* 284 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35381,7 +35498,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _selector = __webpack_require__(285);
+	var _selector = __webpack_require__(287);
 	
 	var _selector2 = _interopRequireDefault(_selector);
 	
@@ -35472,7 +35589,7 @@
 	;
 
 /***/ },
-/* 285 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

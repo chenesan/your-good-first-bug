@@ -59,47 +59,64 @@ html, body {
 @media (max-width: 767px) {
   .main-content > .main-menu {
     display: none; }
-  .main-app > .main-jumbotron {
+  .main-app > .main-header {
     position: fixed;
     top: 0px;
     left: 0px;
     width: 100%;
-    height: 120px;
     z-index: 1000; }
-    .main-app > .main-jumbotron > .title > .text {
-      display: none; }
+    .main-app > .main-header > .title {
+      left: 15px; }
   .main-app > .main-content {
     position: absolute;
-    top: 120px; }
+    top: 60px; }
     .main-app > .main-content > .content {
       width: 100%; }
     .main-app > .main-content > .content > .issue-item {
-      width: calc(100% - 20px * 2); }
+      margin-top: 40px; }
   .main-app > .main-menu {
     display: block; } }
 
 @media (min-width: 768px) {
   .main-content > .main-menu {
     display: block; }
-  .main-app > .main-jumbotron > .menu-button {
-    display: none; }
-  .main-app > .main-jumbotron > .title > .fontImage {
+  .main-app > .main-header > .menu-button {
     display: none; }
   .main-app > .main-menu {
-    display: none; }
-  .main-app > .main-content > .content {
+    display: none; } }
+
+@media (max-width: 575px) {
+  .main-content > .content {
+    padding: 0px 20px; }
+  .content > .issue-item {
+    width: calc(100% - 20px * 2); } }
+
+@media (max-width: 767px) and (min-width: 576px) {
+  .main-content > .content {
+    padding: 0px calc((100% - 500px) / 2); }
+  .content > .issue-item {
+    width: 500px; } }
+
+@media (min-width: 768px) and (max-width: 1030px) {
+  .main-content > .content {
+    padding: 0px calc((100% - 500px - 225px) / 2); }
+  .content > .issue-item {
+    width: 500px; } }
+
+@media (min-width: 1031px) {
+  .main-content > .content {
     width: calc(100% - 225px);
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     -ms-flex-wrap: wrap;
         flex-wrap: wrap; }
-  .main-app > .main-content > .content > .issue-item {
+  .main-content > .content > .issue-item {
     -ms-flex-preferred-size: auto;
         flex-basis: auto;
     width: calc((100% - 20px * 3) / 2);
     margin-right: 20px; }
-    .main-app > .main-content > .content > .issue-item:nth-child(even) {
+    .main-content > .content > .issue-item:nth-child(even) {
       margin-left: 0px; } }
 
 #app-entry-point {
@@ -125,8 +142,8 @@ html, body {
 
 .loading-tip {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: calc(50% - 2.5em);
+  left: calc(50% - 2.5em);
   width: 5em;
   height: 5em;
   border-top: 1.1em solid rgba(200, 200, 200, 0.2);
@@ -158,28 +175,22 @@ html, body {
     -ms-flex-preferred-size: auto;
         flex-basis: auto; }
 
-.main-jumbotron {
-  height: 400px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+.main-header {
+  height: 60px;
   margin: 0;
-  background-color: #0b1013; }
-  .main-jumbotron > .title {
+  background: #0b1013; }
+  .main-header > .menu-button {
+    position: absolute;
+    top: 0px;
+    right: 0px; }
+  .main-header > .title {
     margin: auto;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+    position: absolute;
+    top: 0px;
+    left: calc((100% - 238px) / 2);
     text-align: center;
     color: white;
-    height: 100%; }
-    .main-jumbotron > .title > .text {
-      margin: auto;
-      font-size: 3em;
-      font-family: Verdana; }
-    .main-jumbotron > .title > .fontImage {
-      width: 100%;
-      height: inherit; }
+    height: 60px; }
 
 .main-menu {
   width: 225px;
@@ -202,17 +213,13 @@ html, body {
     margin-top: 20px; }
 
 .menu-button {
-  background: #c6c6c6;
-  width: 120px;
-  height: 120px;
+  width: 60px;
+  height: 60px;
   cursor: pointer;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex; }
+  padding: 10px 15px; }
   .menu-button > .icon {
     margin: auto;
-    width: 96px;
-    height: 96px; }
+    fill: white; }
   .menu-button.-hide {
     display: hidden; }
 
@@ -238,7 +245,7 @@ html, body {
   .issue-item > .content > .description {
     margin-bottom: 5px;
     font-size: 1em;
-    line-height: 1.1em;
+    line-height: 1.2em;
     overflow-x: auto; }
   .issue-item > .content > .more {
     display: table;
@@ -249,7 +256,7 @@ html, body {
     margin: 20px 0 5px 0;
     font-size: 1.5em; }
   .issue-item > .content > .projectDescription {
-    line-height: 1.1em; }
+    line-height: 1.2em; }
   .issue-item > .content > .language {
     display: table-cell;
     position: absolute;
