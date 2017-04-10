@@ -24,21 +24,21 @@ npm run production-build
 ### With express backend and SASS browsersync
 
 ```bash
-// First setup your environment variable in `dev-env.sh`. 
+# First setup your environment variable in `dev-env.sh`. 
 source dev-env.sh
-// start express backend, run on port 3000
+# start express backend, run on port 3000
 npm run express.
-// start SASS browserSync by gulp, this will run on port 3001
+# start SASS browserSync by gulp, this will run on port 3001
 npm run express-gulp
 ```
 
 ### production
 
 ```bash
-// First checkout production branch
+# First checkout production branch
 git checkout production
-// If you haven't built production build, build it.
+# If you haven't built production build, build it.
 npm run production-build
-// run on express backend with built bundle, this will run on port 3000.
+# run on express backend with built bundle, this will run on port 3000.
 npm run production
 ```
