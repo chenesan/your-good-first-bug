@@ -145,7 +145,8 @@ router.get('/', function(req, res, next) {
           <AppContainer />
         </Provider>
       );
-      res.render('index', { html, preloadedState: stateString, title });
+      const templateName = process.env.NODE_ENV === 'production' ? 'production-index' : 'index';
+      res.render(templateName, { html, preloadedState: stateString, title });
     }
   );
 });
