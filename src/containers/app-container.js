@@ -1,13 +1,14 @@
 import { connect } from 'react-redux';
 import App from '../components/app';
 import { getIssueList } from '../reducers/';
-import { isFetching, hasReachedPageEnd } from '../reducers/data';
+import { isFetching, hasReachedPageEnd, fetchingIsFailed } from '../reducers/data';
 import { getSelectors } from '../reducers/issue-selectors';
 import { changeSelectors, cleanIssueData, fetchIssues } from '../actions';
 
 const mapStateToProps = (state) => ({
   issueList: getIssueList(state),
   fetching: isFetching(state.data),
+  fetchingIsFailed: fetchingIsFailed(state.data),
   hasReachedPageEnd: hasReachedPageEnd(state.data),
   selectors: getSelectors(state.issueSelectors),
 });
