@@ -22428,18 +22428,25 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.hasReadLink = exports.getRootUrl = exports.getNextLink = exports.hasReachedPageEnd = exports.isFetching = exports.data = exports.NO_NEXT_LINK = undefined;
+	exports.hasReadLink = exports.getRootUrl = exports.getNextLink = exports.hasReachedPageEnd = exports.fetchingIsFailed = exports.isFetching = exports.data = exports.FETCHING_RESULT = exports.NO_NEXT_LINK = undefined;
 	
 	var _actions = __webpack_require__(192);
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	var NO_NEXT_LINK = exports.NO_NEXT_LINK = 'NO_NEXT_LINK';
+	var FETCHING_RESULT = exports.FETCHING_RESULT = {
+	  SUCCESS: 'SUCCESS',
+	  FAIL: 'FAIL',
+	  NOT_START: 'NOT_START',
+	  NOT_RETURN: 'NOT_RETURN'
+	};
 	
 	var initialState = {
 	  issueListIds: [],
 	  issueListById: {},
 	  status: {
+	    fetchingResult: FETCHING_RESULT.NOT_START,
 	    fetching: false,
 	    link: {
 	      root: '/api/v1/issues',
@@ -22452,6 +22459,7 @@
 	var changeStatus = function changeStatus(status, option) {
 	  var updatedStatus = {
 	    fetching: option.fetching !== undefined ? option.fetching : status.fetching,
+	    fetchingResult: option.fetchingResult || status.fetchingResult,
 	    link: option.link ? Object.assign({}, status.link, {
 	      next: option.link.next,
 	      isEnd: option.link.isEnd
@@ -22504,7 +22512,8 @@
 	    case _actions.FETCH_ISSUES_REQUEST:
 	      {
 	        var nextStatus = changeStatus(state.status, {
-	          fetching: true
+	          fetching: true,
+	          fetchingResult: FETCHING_RESULT.NOT_RETURN
 	        });
 	        var nextState = Object.assign({}, state, {
 	          status: nextStatus
@@ -22515,6 +22524,7 @@
 	      {
 	        var _nextStatus = changeStatus(state.status, {
 	          fetching: false,
+	          fetchingResult: FETCHING_RESULT.SUCCESS,
 	          link: action.link
 	        });
 	        var _nextState = Object.assign(addIssueData(state, action), { status: _nextStatus });
@@ -22524,6 +22534,7 @@
 	      {
 	        var _nextStatus2 = changeStatus(state.status, {
 	          fetching: false,
+	          fetchingResult: FETCHING_RESULT.FAIL,
 	          link: action.link
 	        });
 	        var _nextState2 = Object.assign({}, state, { status: _nextStatus2 });
@@ -22555,6 +22566,9 @@
 	var isFetching = exports.isFetching = function isFetching(state) {
 	  return state.status.fetching;
 	};
+	var fetchingIsFailed = exports.fetchingIsFailed = function fetchingIsFailed(state) {
+	  return state.status.fetchingResult === FETCHING_RESULT.FAIL;
+	};
 	var hasReachedPageEnd = exports.hasReachedPageEnd = function hasReachedPageEnd(state) {
 	  return state.status.link.isEnd;
 	};
@@ -22578,9 +22592,13 @@
 	
 	  __REACT_HOT_LOADER__.register(NO_NEXT_LINK, 'NO_NEXT_LINK', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
 	
+	  __REACT_HOT_LOADER__.register(FETCHING_RESULT, 'FETCHING_RESULT', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
+	
 	  __REACT_HOT_LOADER__.register(data, 'data', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
 	
 	  __REACT_HOT_LOADER__.register(isFetching, 'isFetching', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
+	
+	  __REACT_HOT_LOADER__.register(fetchingIsFailed, 'fetchingIsFailed', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
 	
 	  __REACT_HOT_LOADER__.register(hasReachedPageEnd, 'hasReachedPageEnd', '/Users/yishan/Documents/Projects/your-good-first-bug/src/reducers/data.js');
 	
@@ -24321,6 +24339,7 @@
 	  return {
 	    issueList: (0, _reducers.getIssueList)(state),
 	    fetching: (0, _data.isFetching)(state.data),
+	    fetchingIsFailed: (0, _data.fetchingIsFailed)(state.data),
 	    hasReachedPageEnd: (0, _data.hasReachedPageEnd)(state.data),
 	    selectors: (0, _issueSelectors.getSelectors)(state.issueSelectors)
 	  };
@@ -24480,7 +24499,7 @@
 	            selectors: this.props.selectors,
 	            selectorChangeHandler: this.props.selectorChangeHandler
 	          }),
-	          _react2.default.createElement(_content2.default, { fetching: this.props.fetching, issueList: this.props.issueList })
+	          _react2.default.createElement(_content2.default, { fetchingIsFailed: this.props.fetchingIsFailed, issueList: this.props.issueList })
 	        ),
 	        _react2.default.createElement(_menu2.default, {
 	          hide: !this.state.showSideBar, side: true,
@@ -24497,6 +24516,7 @@
 	
 	App.propTypes = {
 	  fetching: _react2.default.PropTypes.bool.isRequired,
+	  fetchingIsFailed: _react2.default.PropTypes.bool.isRequired,
 	  hasReachedPageEnd: _react2.default.PropTypes.bool.isRequired,
 	  issueList: _react2.default.PropTypes.arrayOf(function (propVal, key) {
 	    // todo: validator
@@ -24553,7 +24573,7 @@
 	
 	function Content(props) {
 	  var innerContent = void 0;
-	  if (props.issueList.length === 0 && !props.fetching) {
+	  if (props.issueList.length === 0 && props.fetchingIsFailed) {
 	    // not fetching and there's no issues
 	    // so there's no result.
 	    innerContent = _react2.default.createElement(_noResult2.default, null);
@@ -24570,7 +24590,7 @@
 	}
 	
 	Content.propTypes = {
-	  fetching: _react2.default.PropTypes.bool.isRequired,
+	  fetchingIsFailed: _react2.default.PropTypes.bool.isRequired,
 	  issueList: _react2.default.PropTypes.arrayOf(function (propVal, key) {
 	    // todo: validator
 	    if (!propVal.title) {
