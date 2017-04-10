@@ -61,7 +61,7 @@ class App extends Component {
             selectors={this.props.selectors}
             selectorChangeHandler={this.props.selectorChangeHandler}
           />
-          <Content fetching={this.props.fetching} issueList={this.props.issueList} />
+          <Content fetchingIsFailed={this.props.fetchingIsFailed} issueList={this.props.issueList} />
         </div>
         <Menu
           hide={!this.state.showSideBar} side
@@ -78,6 +78,7 @@ class App extends Component {
 
 App.propTypes = {
   fetching: React.PropTypes.bool.isRequired,
+  fetchingIsFailed: React.PropTypes.bool.isRequired,
   hasReachedPageEnd: React.PropTypes.bool.isRequired,
   issueList: React.PropTypes.arrayOf((propVal, key) => {
     // todo: validator

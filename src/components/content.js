@@ -4,7 +4,7 @@ import NoResult from './no-result';
 
 export default function Content(props) {
   let innerContent;
-  if (props.issueList.length === 0 && !props.fetching) {
+  if (props.issueList.length === 0 && props.fetchingIsFailed) {
     // not fetching and there's no issues
     // so there's no result.
     innerContent = <NoResult />;
@@ -17,7 +17,7 @@ export default function Content(props) {
 }
 
 Content.propTypes = {
-  fetching: React.PropTypes.bool.isRequired,
+  fetchingIsFailed: React.PropTypes.bool.isRequired,
   issueList: React.PropTypes.arrayOf((propVal, key) => {
     // todo: validator
     if (!propVal.title) {

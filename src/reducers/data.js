@@ -2,11 +2,18 @@ import { CHANGE_ISSUES_SELECTOR, CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST,
   FETCH_ISSUES_SUCCESS, FETCH_ISSUES_FAILURE } from '../actions/';
 
 export const NO_NEXT_LINK = 'NO_NEXT_LINK';
+export const FETCHING_RESULT = {
+  SUCCESS: 'SUCCESS',
+  FAIL: 'FAIL',
+  NOT_START: 'NOT_START',
+  NOT_RETURN: 'NOT_RETURN',
+};
 
 const initialState = {
   issueListIds: [],
   issueListById: {},
   status: {
+    fetchingResult: FETCHING_RESULT.NOT_START,
     fetching: false,
     link: {
       root: '/api/v1/issues',
@@ -19,6 +26,7 @@ const initialState = {
 const changeStatus = (status, option) => {
   const updatedStatus = {
     fetching: option.fetching !== undefined ? option.fetching : status.fetching,
+    fetchingResult: option.fetchingResult || status.fetchingResult,
     link: option.link ?
       Object.assign({}, status.link, {
         next: option.link.next,
@@ -69,6 +77,7 @@ export const data = (state = initialState, action) => {
     case FETCH_ISSUES_REQUEST: {
       const nextStatus = changeStatus(state.status, {
         fetching: true,
+        fetchingResult: FETCHING_RESULT.NOT_RETURN,
       });
       const nextState = Object.assign({}, state, {
         status: nextStatus,
@@ -80,6 +89,7 @@ export const data = (state = initialState, action) => {
         state.status,
         {
           fetching: false,
+          fetchingResult: FETCHING_RESULT.SUCCESS,
           link: action.link,
         }
       );
@@ -94,6 +104,7 @@ export const data = (state = initialState, action) => {
         state.status,
         {
           fetching: false,
+          fetchingResult: FETCHING_RESULT.FAIL,
           link: action.link,
         }
       );
@@ -124,6 +135,7 @@ export const data = (state = initialState, action) => {
 // selector
 
 export const isFetching = (state) => state.status.fetching;
+export const fetchingIsFailed = (state) => state.status.fetchingResult === FETCHING_RESULT.FAIL;
 export const hasReachedPageEnd = (state) => {
   return state.status.link.isEnd;
 };
