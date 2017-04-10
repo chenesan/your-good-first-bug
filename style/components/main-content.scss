@@ -1,10 +1,15 @@
 .main-content {
+  // make height as high as container
+  position: absolute;
   width: 100%;
+  min-height: 100%;
   display: flex;
+
 
   > .content {
     flex-basis: auto;
-    padding-top: 10px;
+    padding: 10px 0px;
+    height: 100%;
   }
 
   > .main-menu {
