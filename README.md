@@ -1,8 +1,6 @@
-# your-good-first-bug
+# [your-good-first-bug](http://yourgoodfirstbug.yishan.toys)
 
-A website collecting beginner-friendly bugs in open source projects.
-
-**Warning: This project is under rapid developing recently.**
+A website collecting beginner-friendly bugs on github.
 
 ## Build
 
@@ -10,9 +8,12 @@ A website collecting beginner-friendly bugs in open source projects.
 
 `npm i`
 
-### Only for production
+### For production
 
-`npm i --only=production`
+```
+npm i --only=production
+npm run production-build
+```
 
 ## Run
 
@@ -20,9 +21,24 @@ A website collecting beginner-friendly bugs in open source projects.
 
 `npm run dev-hot`
 
-### With express
+### With express backend and SASS browsersync
 
-First setup your environment variable in `dev-env.sh`. Then run `npm run express`.
+```bash
+# First setup your environment variable in `dev-env.sh`. 
+source dev-env.sh
+# start express backend, run on port 3000
+npm run express.
+# start SASS browserSync by gulp, this will run on port 3001
+npm run express-gulp
+```
 
-**Warning: This only work under the 'add-redux-and-fake-backend' branch. The schema
-of database is not stable currently.**
+### production
+
+```bash
+# First checkout production branch
+git checkout production
+# If you haven't built production build, build it.
+npm run production-build
+# run on express backend with built bundle, this will run on port 3000.
+npm run production
+```
