@@ -24,6 +24,13 @@ function buildLinkStateFromLinkHeader(linkHeader) {
   return state;
 }
 
+function buildFailureLinkState() {
+  return {
+    next: NO_NEXT_LINK,
+    isEnd: true,
+  };
+}
+
 export const CLEAN_ISSUE_DATA = 'CLEAN_ISSUE_DATA';
 export const FETCH_ISSUES_REQUEST = 'FETCH_ISSUES_REQUEST';
 export const FETCH_ISSUES_SUCCESS = 'FETCH_ISSUES_SUCCESS';
@@ -43,11 +50,12 @@ export const cleanIssueData = () => ({
   type: CLEAN_ISSUE_DATA,
 });
 
-export const fetchIssuesSuccess = (payload) => {
+export const fetchIssuesSuccess = (response) => {
+  const linkState = buildLinkStateFromLinkHeader(response.headers.link);
   const action = {
     type: FETCH_ISSUES_SUCCESS,
-    data: payload.data,
-    link: payload.link,
+    data: response.data,
+    link: linkState,
   };
   return action;
 };
@@ -58,6 +66,7 @@ export const fetchIssuesRequest = () => ({
 
 export const fetchIssuesFailure = () => ({
   type: FETCH_ISSUES_FAILURE,
+  link: buildFailureLinkState(),
 });
 
 export const fetchIssues = () => (dispatch, getState) => {
@@ -71,12 +80,7 @@ export const fetchIssues = () => (dispatch, getState) => {
     dispatch(fetchIssuesRequest());
     request.then(
       (response) => {
-        const linkState = buildLinkStateFromLinkHeader(response.headers.link);
-        const payload = {
-          data: response.data,
-          link: linkState,
-        };
-        dispatch(fetchIssuesSuccess(payload));
+        dispatch(fetchIssuesSuccess(response));
       },
       (err) => {
         console.error(err);
