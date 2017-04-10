@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import IssueItem from './issue-item';
+import Content from './content';
 import Header from './header';
 import LoadingTip from './loading-tip';
 import Menu from './menu';
+
 
 class App extends Component {
   constructor() {
@@ -60,13 +61,7 @@ class App extends Component {
             selectors={this.props.selectors}
             selectorChangeHandler={this.props.selectorChangeHandler}
           />
-          <div className="content">
-            {
-              this.props.issueList.map((issueData) => (
-                <IssueItem issueData={issueData} />
-              ))
-            }
-          </div>
+          <Content fetching={this.props.fetching} issueList={this.props.issueList} />
         </div>
         <Menu
           hide={!this.state.showSideBar} side

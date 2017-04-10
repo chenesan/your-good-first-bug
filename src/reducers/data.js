@@ -1,5 +1,5 @@
 import { CHANGE_ISSUES_SELECTOR, CLEAN_ISSUE_DATA, FETCH_ISSUES_REQUEST,
-  FETCH_ISSUES_SUCCESS } from '../actions/';
+  FETCH_ISSUES_SUCCESS, FETCH_ISSUES_FAILURE } from '../actions/';
 
 export const NO_NEXT_LINK = 'NO_NEXT_LINK';
 
@@ -87,6 +87,17 @@ export const data = (state = initialState, action) => {
         addIssueData(state, action),
         { status: nextStatus }
       );
+      return nextState;
+    }
+    case FETCH_ISSUES_FAILURE: {
+      const nextStatus = changeStatus(
+        state.status,
+        {
+          fetching: false,
+          link: action.link,
+        }
+      );
+      const nextState = Object.assign({}, state, { status: nextStatus });
       return nextState;
     }
     case CLEAN_ISSUE_DATA: {
