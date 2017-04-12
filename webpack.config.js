@@ -48,6 +48,9 @@ module.exports = {
         DEBUG_: false,
       },
     }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: true,
+    }),
   ],
   devServer: {
     historyApiFallback: true,
