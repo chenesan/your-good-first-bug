@@ -32,8 +32,9 @@ class HandleWithInput extends Component {
     const { className, vertical, offset } = this.props;
     const handleStyle = vertical ? { bottom: `${offset}%` } : { left: `${offset}%` };
     const wrapperStyle = handleStyle;
+    const handleName = this.props.index === 0 ? 'left' : 'right';
     return (
-      <div className="handle-with-input" style={wrapperStyle}>
+      <div className={`handle-with-input -${handleName}`} style={wrapperStyle}>
         <input
           type="text"
           className="input"
