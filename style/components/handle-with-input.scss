@@ -1,18 +1,30 @@
+$handle-input-width: 45px;
 .handle-with-input {
   position: absolute;
   > .input {
     position: absolute;
-    top: -30px;
-    left: -20px;
+    left: -0.5 * $handle-input-width;
     border: 0px;
     display: 'inline-block';
     padding: 2px 1px;
-    width: 45px;
+    width: $handle-input-width;
     background: theme-color(slider-handle, input-bg);
     color: theme-color(slider-handle, input-text);
     text-align: center;
     &:focus {
       outline: none;
+    }
+  }
+
+  &.-left {
+    > .input {
+      top: 16px;
+    }
+  }
+
+  &.-right {
+    > .input {
+      top: -30px;
     }
   }
 }

@@ -161,7 +161,7 @@ export const buildQuery = (state) => {
     config.projectSize = JSON.stringify({
       operator: '&',
       value: [
-        { operator: '<', value: right },
+        { operator: '<=', value: right },
         { operator: '>=', value: left },
       ],
     });

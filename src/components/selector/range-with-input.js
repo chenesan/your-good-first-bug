@@ -63,6 +63,7 @@ class RangeWithInput extends Component {
         defaultValue={defaultValue}
         handle={this.createHandleWithInput}
         onAfterChange={this.handleRangeChange}
+        allowCross={false}
         {...condProps}
       />
     );
