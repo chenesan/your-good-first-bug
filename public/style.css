@@ -533,8 +533,7 @@ body {
   position: absolute; }
   .handle-with-input > .input {
     position: absolute;
-    top: -30px;
-    left: -20px;
+    left: -22.5px;
     border: 0px;
     display: 'inline-block';
     padding: 2px 1px;
@@ -544,6 +543,10 @@ body {
     text-align: center; }
     .handle-with-input > .input:focus {
       outline: none; }
+  .handle-with-input.-left > .input {
+    top: 16px; }
+  .handle-with-input.-right > .input {
+    top: -30px; }
 
 .issue-item {
   position: relative;
