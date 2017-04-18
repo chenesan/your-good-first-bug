@@ -1,11 +1,27 @@
+const sequelize = require('sequelize');
 const models = require('./models');
 
-function buildComparedQuery(qs, transformer = undefined) {
-  // the qs should be JSON-string, containing an array
-  // whose element is an object containing following field:
+function parseQueryString(qs) {
+  if (!qs) {
+    return {};
+  } else {
+    let queries;
+    try {
+      queries = JSON.parse(qs);
+    } catch (err) {
+      console.error('Fail to parse query string with JSON: ', qs);
+      queries = {};
+    }
+    return queries;
+  }
+}
+
+function buildComparedQuery(query, transformer = undefined) {
+  // the qs should be JSON-string, containing a tree
+  // which contains following field:
   // {
-  //   operator: string, including '>', '<', '>=', '<='...
-  //   value: the value we want to compared
+  //   operator: string, including '>', '<', '>=', '<=', '&', '|'...
+  //   value: the value we want to compared, can be a number, string or query type.
   // }
   // If the `transformer` argument is given, the JSON-parsed
   // value will be passed to get the value to compared.
@@ -28,36 +44,39 @@ function buildComparedQuery(qs, transformer = undefined) {
     '!=': (value) => ({
       $ne: value,
     }),
+    '&': (value) => ({
+      $and: value.reduce(
+        (q, childQ) => Object.assign(q, buildComparedQuery(childQ, transformer)),
+        {}
+      ),
+    }),
+    '|': (value) => ({
+      $or: value.reduce(
+        (q, childQ) => Object.assign(q, buildComparedQuery(childQ, transformer)),
+        {}
+      ),
+    }),
   };
-  if (!qs) {
-    return undefined;
-  } else {
-    let queries;
-    try {
-      queries = JSON.parse(qs);
-    }
-    catch (err) {
-      console.error('Fail to parse query string with JSON: ', qs);
-      return {};
-    }
-    return queries.reduce((where, query) => {
-      const comparator = comparatorMap[query.operator];
-      if (comparator === undefined) {
-        console.log('Fail to parse comparator with operator: ', query.operator);
-        console.log('Just don\'t put it into WHERE query.');
-        return query;
-      }
-      let value;
-      try {
-        value = transformer ? transformer(query.value) : query.value;
-      }
-      catch (err) {
-        console.error('Fail to transform value: ', query[1], ' with transformer: ', transformer);
-        return query;
-      }
-      return Object.assign({}, where, comparator(value));
-    }, {});
+  const comparator = comparatorMap[query.operator];
+  if (comparator === undefined) {
+    console.log('Fail to parse comparator with operator: ', query.operator);
+    console.log('Just don\'t put it into WHERE query.');
+    return {};
   }
+  let value;
+  try {
+    value = transformer ? transformer(query.value) : query.value;
+  }
+  catch (err) {
+    console.error('Fail to transform value: ', query, ' with transformer: ', transformer);
+    return {};
+  }
+  return comparator(value);
+}
+
+function buildComparedQueryFromRawQS(qs) {
+  const queries = parseQueryString(qs);
+  return buildComparedQuery(queries);
 }
 
 function buildPaginatedQuery(query, page, limit) {
@@ -111,7 +130,7 @@ function buildQuery(rawQuery) {
         if (includedModel.model === models.Project) {
           hasIncludedProject = true;
           includedModel.where = includedModel.where ? includedModel.where : {};
-          includedModel.where.size = buildComparedQuery(projectSize);
+          includedModel.where.size = buildComparedQueryFromRawQS(projectSize);
         }
       }
       if (!hasIncludedProject) {
@@ -119,7 +138,7 @@ function buildQuery(rawQuery) {
           model: models.Project,
           attributes: ['name', 'url', 'description', 'size'],
           where: {
-            size: buildComparedQuery(projectSize),
+            size: buildComparedQueryFromRawQS(projectSize),
           },
         });
       }
@@ -127,7 +146,7 @@ function buildQuery(rawQuery) {
     },
     createdAt: (q, createdAt) => {
       const newQuery = Object.assign({}, q);
-      newQuery.where.createdAt = buildComparedQuery(createdAt);
+      newQuery.where.createdAt = buildComparedQueryFromRawQS(createdAt);
       return newQuery;
     },
     sortBy: (q, sortBy) => {
@@ -212,7 +231,10 @@ const queryDistinctLanguages = () => {
   );
 };
 
+const getMaxProjectSize = () => models.Project.getMaxProjectSize;
+
 module.exports = {
   queryIssues,
   queryDistinctLanguages,
+  getMaxProjectSize,
 };

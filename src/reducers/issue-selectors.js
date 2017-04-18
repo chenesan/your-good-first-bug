@@ -1,25 +1,31 @@
-import { CHANGE_ISSUES_SELECTORS, UPDATE_SELECTOR_OPTIONS } from '../actions';
+import { CHANGE_ISSUES_SELECTORS, UPDATE_SELECTOR_DATA } from '../actions';
 
 const initialState = {
   filter: {
     language: {
+      type: 'option',
       name: 'Language',
       selectedIndex: 0,
       options: [],
     },
     projectSize: {
-      name: 'Project Size',
-      selectedIndex: 0,
-      options: [],
+      type: 'range',
+      name: 'Project Size (KB)',
+      min: 1,
+      max: 65535,
+      left: 1,
+      right: 65535,
     },
   },
   sorter: {
     sortBy: {
+      type: 'option',
       name: 'Sort By',
       selectedIndex: 0,
       options: [],
     },
     order: {
+      type: 'option',
       name: 'Order',
       selectedIndex: 0,
       options: [],
@@ -27,10 +33,46 @@ const initialState = {
   },
 };
 
-const setSelectedIndex = (selector, selectedIndex) => {
-  return Object.assign({}, selector, {
-    selectedIndex,
-  });
+const selectorGetterMap = {
+  option: (selector) => selector.options[selector.selectedIndex].value,
+  range: (selector) => ({
+    left: selector.left,
+    right: selector.right,
+  }),
+};
+
+const selectorChangeMap = {
+  option: (selector, change) => Object.assign({}, selector, {
+    selectedIndex: change.selectedIndex,
+  }),
+  range: (selector, change) => Object.assign({}, selector, {
+    left: change.left,
+    right: change.right,
+  }),
+};
+
+const selectorUpdateMap = {
+  option: (selector, dataObj) => {
+    const oldOptions = selector.options;
+    const newOptions = [...oldOptions].concat(
+      dataObj.options.filter(
+        (option) => oldOptions.every(
+          (oldOption) => oldOption.value !== option.value
+        )
+      )
+    );
+    return Object.assign({}, selector, {
+      options: newOptions,
+    });
+  },
+  range: (selector, dataObj) => {
+    return Object.assign({}, selector, {
+      left: dataObj.left || selector.left || 1,
+      right: dataObj.right || selector.right || 10000,
+      min: dataObj.min,
+      max: dataObj.max,
+    });
+  },
 };
 
 const setSubSelectors = (subSelectors, changes) => {
@@ -43,7 +85,7 @@ const setSubSelectors = (subSelectors, changes) => {
           [key]: Object.assign(
             {},
             prev[key],
-            setSelectedIndex(prev[key], changes[key].selectedIndex)
+            selectorChangeMap[prev[key].type](prev[key], changes[key])
           ),
         });
       }
@@ -71,32 +113,22 @@ export const issueSelectors = (state = initialState, action) => {
       );
       return nextState;
     }
-    case UPDATE_SELECTOR_OPTIONS: {
-      return action.optionsGroup.reduce(
-        (prevState, optionsObj) => {
-          const category = optionsObj.category;
+    case UPDATE_SELECTOR_DATA: {
+      return action.dataGroup.reduce(
+        (prevState, dataObj) => {
+          const category = dataObj.category;
           const subSelectors = prevState[category];
           if (!subSelectors) {
             return prevState;
           } else {
-            const selectorPropName = optionsObj.selectorPropName;
+            const selectorPropName = dataObj.selectorPropName;
             const selector = subSelectors[selectorPropName];
             if (!selector) {
               return prevState;
             } else {
-              const oldOptions = selector.options;
-              const newOptions = [...oldOptions].concat(
-                optionsObj.options.filter(
-                  (option) => oldOptions.every(
-                    (oldOption) => oldOption.value !== option.value
-                  )
-                )
-              );
               const nextState = Object.assign({}, prevState, {
                 [category]: Object.assign({}, subSelectors, {
-                  [selectorPropName]: Object.assign({}, selector, {
-                    options: newOptions,
-                  }),
+                  [selectorPropName]: selectorUpdateMap[selector.type](selector, dataObj),
                 }),
               });
               return nextState;
@@ -116,7 +148,7 @@ export const issueSelectors = (state = initialState, action) => {
 
 export const getSelectorValue = (state, subSelectorsName, selectorPropName) => {
   const selector = state[subSelectorsName][selectorPropName];
-  return selector.options[selector.selectedIndex].value;
+  return selectorGetterMap[selector.type](selector);
 };
 
 export const buildQuery = (state) => {
@@ -125,7 +157,14 @@ export const buildQuery = (state) => {
     config.language = getSelectorValue(state, 'filter', 'language');
   }
   if (getSelectorValue(state, 'filter', 'projectSize') !== 'all') {
-    config.projectSize = getSelectorValue(state, 'filter', 'projectSize');
+    const { left, right } = getSelectorValue(state, 'filter', 'projectSize');
+    config.projectSize = JSON.stringify({
+      operator: '&',
+      value: [
+        { operator: '<', value: right },
+        { operator: '>=', value: left },
+      ],
+    });
   }
   config.sortBy = getSelectorValue(state, 'sorter', 'sortBy');
   config.order = getSelectorValue(state, 'sorter', 'order');

@@ -1,17 +1,19 @@
-var express = require('express');
-var url = require('url');
-var router = express.Router();
-var apiRouter = express.Router();
-var v1Router = express.Router();
+import url from 'url';
 import co from 'co';
+import express from 'express';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { queryIssues, queryDistinctLanguages } from '../query';
+import { queryIssues, queryDistinctLanguages, getMaxProjectSize } from '../query';
 import AppContainer from '../src/containers/app-container';
-import { updateSelectorOptions } from '../src/actions';
+import { updateSelectorData } from '../src/actions';
 import reducers from '../src/reducers';
+
+
+const router = express.Router();
+const apiRouter = express.Router();
+const v1Router = express.Router();
 
 const ISSUES_QUERY_OPTIONS = {
   language: Symbol('language'),
@@ -86,35 +88,31 @@ v1Router.route('/issues')
 apiRouter.use('/v1', v1Router);
 /* GET home page. */
 
-var buildOptionsOfSelectors = co.wrap(function*() {
+var buildSelectorsData = co.wrap(function*() {
   const languageDistinctPromise = queryDistinctLanguages();
   return [
     {
       category: 'filter',
       selectorPropName: 'language',
       selectorName: 'Language',
+      type: 'option',
       options: [{ value: 'all' }, ...(yield languageDistinctPromise)],
     },
     {
       category: 'filter',
       selectorPropName: 'projectSize',
-      selectorName: 'Project Size',
-      options: [
-        { value: 'all' },
-        { value: JSON.stringify([{ operator: '>=', value: 3000 }]), description: 'large' },
-        { value: JSON.stringify([
-          { operator: '<', value: 3000 },
-          { operator: '>=', value: 1000 },
-        ]),
-          description: 'medium',
-        },
-        { value: JSON.stringify([{ operator: '<', value: 1000 }]), description: 'small' },
-      ],
+      selectorName: 'Project Size (KB)',
+      type: 'range',
+      min: 1,
+      max: (yield getMaxProjectSize()),
+      left: 1,
+      right: (yield getMaxProjectSize()),
     },
     {
       category: 'sorter',
       selectorPropName: 'sortBy',
       selectorName: 'Sort By',
+      type: 'option',
       options: [
         { value: 'createdAt', description: 'Created Time' },
         { value: 'popularity', description: 'Popularity' },
@@ -125,6 +123,7 @@ var buildOptionsOfSelectors = co.wrap(function*() {
       category: 'sorter',
       selectorPropName: 'order',
       selectorName: 'Order',
+      type: 'option',
       options: [
         { value: 'descendant' },
         { value: 'ascendant' },
@@ -136,9 +135,9 @@ var buildOptionsOfSelectors = co.wrap(function*() {
 router.get('/', function(req, res, next) {
   const store = createStore(reducers);
   const title = TITLE;
-  buildOptionsOfSelectors().then(
-    (selectorOptions) => {
-      store.dispatch(updateSelectorOptions(selectorOptions));
+  buildSelectorsData().then(
+    (selectorsData) => {
+      store.dispatch(updateSelectorData(selectorsData));
       const stateString = JSON.stringify(store.getState());
       const html = renderToString(
         <Provider store={store}>
@@ -146,6 +145,11 @@ router.get('/', function(req, res, next) {
         </Provider>
       );
       res.render('index', { html, preloadedState: stateString, title });
+    }
+  ).then(
+    () => {},
+    (err) => {
+      console.log(err);
     }
   );
 });
