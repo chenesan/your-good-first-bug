@@ -36,6 +36,7 @@
     "mysql": "^2.11.1",
     "postcss-reporter": "^1.4.1",
     "postcss-scss": "^0.3.0",
+    "rc-slider": "^6.2.0",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-redux": "^4.4.5",

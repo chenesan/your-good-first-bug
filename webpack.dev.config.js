@@ -24,6 +24,10 @@ module.exports = {
     ],
     loaders: [
       {
+        test: /\.css$/,
+        loaders: ['style-loader', 'css-loader'],
+      },
+      {
         test: /\.js$/,
         loaders: [
           'babel?presets[]=es2015,presets[]=react',

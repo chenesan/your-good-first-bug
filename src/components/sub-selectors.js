@@ -24,10 +24,10 @@ class SubSelectors extends Component {
                 <Selector
                   key={index}
                   name={selector.name}
-                  propertyName={key}
-                  currentValue={selector.options[selector.selectedIndex].value}
-                  options={selector.options}
+                  type={selector.type}
+                  propName={key}
                   changeHandler={this.changeHandler}
+                  {...selector}
                 />
               );
             }

@@ -4,4 +4,11 @@
     font-family: Helvetica;
     font-size: 1em;
   }
+
+  // for slider(range) selector
+  > .rc-slider {
+    margin-top: 30px;
+    margin-left: 10px;
+    width: 90%;
+  }
 }
