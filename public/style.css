@@ -522,8 +522,7 @@ body {
   font-size: 1em; }
 
 .menu-selector > .rc-slider {
-  margin-top: 30px;
-  margin-left: 10px;
+  margin: 35px 10px;
   width: 90%; }
 
 .no-result-tip {
