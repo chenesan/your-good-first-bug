@@ -1,5 +1,5 @@
-const sequelize = require('sequelize');
-const models = require('./models');
+import co from 'co';
+import models from './models';
 
 function parseQueryString(qs) {
   if (!qs) {
@@ -86,6 +86,43 @@ function buildPaginatedQuery(query, page, limit) {
   });
 }
 
+function upsertIncludedModel(query, newInclude) {
+  /*
+    `query` is the `option.include` in the argument of Sequelize Model.findAll.
+    `newInclude` is the included association we want to left join in query.
+    `query` can also be the element of `option.include`,
+    since sometimes we want to do nested left join.
+
+    If in `query.include` there has been the model in `newInclude`,
+    just update it with `newInclude`.
+    Or we add the `newInclude` into `query.include`.
+    The return value will be the updated `query`.
+  */
+  let hasIncludedProject = false;
+  if (query.include instanceof Array) {
+    query.include.forEach(
+      (includedModel) => {
+        if (includedModel.model === newInclude.model) {
+          hasIncludedProject = true;
+          includedModel.where = Object.assign({}, includedModel.where, newInclude.where);
+          if (newInclude.include instanceof Array) {
+            newInclude.include.forEach(
+              (innerInclude) => { upsertIncludedModel(includedModel, innerInclude); }
+            );
+          }
+        }
+      }
+    );
+    if (!hasIncludedProject) {
+      query.include.push(newInclude);
+    }
+  } else {
+    query.include = [newInclude];
+  }
+
+  return query;
+}
+
 function buildQuery(rawQuery) {
   const queryBuilders = {
     language: (q, language) => {
@@ -95,54 +132,30 @@ function buildQuery(rawQuery) {
         where: { name: language },
         attributes: ['name'],
       };
-      let hasIncludedProject = false;
-      const includeLength = newQuery.include.length;
-      for (let i = 0; i < includeLength; i++) {
-        const includedModel = newQuery.include[i];
-        if (includedModel.model === models.Project) {
-          hasIncludedProject = true;
-          if (includedModel.include !== undefined) {
-            for (const j in includedModel.include) {
-              if (includedModel.include[j].model === models.Language) {
-                includedModel.include[j] = includedLanguage;
-              }
-            }
-          } else {
-            newQuery.include[i].include = [includedLanguage];
-          }
-        }
-      }
-      if (!hasIncludedProject) {
-        newQuery.include.push({
-          model: models.Project,
-          attributes: ['name'],
-          include: [includedLanguage],
-        });
-      }
-      return newQuery;
+      const includedProject = {
+        model: models.Project,
+        attributes: ['name', 'url', 'description', 'size', 'popularity'],
+        include: [includedLanguage],
+      };
+      return upsertIncludedModel(newQuery, includedProject);
+    },
+    popularity: (q, popularity) => {
+      const newQuery = Object.assign({}, q);
+      const newInclude = {
+        model: models.Project,
+        where: { popularity: buildComparedQueryFromRawQS(popularity) },
+        attributes: ['name', 'url', 'description', 'size', 'popularity'],
+      };
+      return upsertIncludedModel(newQuery, newInclude);
     },
     projectSize: (q, projectSize) => {
       const newQuery = Object.assign({}, q);
-      let hasIncludedProject = false;
-      const includeLength = newQuery.include.length;
-      for (let i = 0; i < includeLength; i++) {
-        const includedModel = newQuery.include[i];
-        if (includedModel.model === models.Project) {
-          hasIncludedProject = true;
-          includedModel.where = includedModel.where ? includedModel.where : {};
-          includedModel.where.size = buildComparedQueryFromRawQS(projectSize);
-        }
-      }
-      if (!hasIncludedProject) {
-        newQuery.include.push({
-          model: models.Project,
-          attributes: ['name', 'url', 'description', 'size'],
-          where: {
-            size: buildComparedQueryFromRawQS(projectSize),
-          },
-        });
-      }
-      return newQuery;
+      const newInclude = {
+        model: models.Project,
+        where: { size: buildComparedQueryFromRawQS(projectSize) },
+        attributes: ['name', 'url', 'description', 'size', 'popularity'],
+      };
+      return upsertIncludedModel(newQuery, newInclude);
     },
     createdAt: (q, createdAt) => {
       const newQuery = Object.assign({}, q);
@@ -203,7 +216,11 @@ function queryIssues(rawQuery, page = 1, limit = 100) {
   console.log('Receive rawQuery: ', rawQuery);
   const query = buildQuery(rawQuery);
   const paginatedQuery = buildPaginatedQuery(query, page, limit);
-  console.log('Build query: ', paginatedQuery, paginatedQuery.include[0].where);
+  console.log(
+    'Build query: ', paginatedQuery,
+    'Project where query: ', paginatedQuery.include[0].where,
+    'Project include query: ', paginatedQuery.include[0].include
+  );
   return models.Issue.findAndCountAll(paginatedQuery)
   .catch((err) => { throw err; })
   .then(
@@ -231,10 +248,13 @@ const queryDistinctLanguages = () => {
   );
 };
 
-const getMaxProjectSize = () => models.Project.getMaxProjectSize;
+const getMaxProjectSize = () => models.Project.getMaxCol('size');
+
+const getMaxProjectPopularity = () => models.Project.getMaxCol('popularity');
 
 module.exports = {
   queryIssues,
   queryDistinctLanguages,
   getMaxProjectSize,
+  getMaxProjectPopularity,
 };

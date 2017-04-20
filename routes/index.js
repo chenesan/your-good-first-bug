@@ -5,7 +5,12 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { queryIssues, queryDistinctLanguages, getMaxProjectSize } from '../query';
+import {
+  queryIssues,
+  queryDistinctLanguages,
+  getMaxProjectSize,
+  getMaxProjectPopularity,
+} from '../query';
 import AppContainer from '../src/containers/app-container';
 import { updateSelectorData } from '../src/actions';
 import reducers from '../src/reducers';
@@ -15,11 +20,13 @@ const router = express.Router();
 const apiRouter = express.Router();
 const v1Router = express.Router();
 
+// query option restriction
 const ISSUES_QUERY_OPTIONS = {
   language: Symbol('language'),
   page: Symbol('page'),
   createdAt: Symbol('createdAt'),
   projectSize: Symbol('projectSize'),
+  popularity: Symbol('popularity'),
   sortBy: Symbol('createdAt'),
   order: Symbol('order'),
 };
@@ -37,7 +44,6 @@ function buildLinkUrl(urlObject, query, page) {
 }
 
 function buildLinkHeaders(queryResult, baseHref, query) {
-  console.log(queryResult, baseHref, query);
   const pageTotal = queryResult.pageTotal;
   const currentPage = query.page ? Number(query.page, 10) : 1;
   const link = {};
@@ -74,7 +80,6 @@ v1Router.route('/issues')
     (result) => {
       const baseHref = buildHref(req);
       const linkHeaders = buildLinkHeaders(result, baseHref, query);
-      console.log(linkHeaders);
       res.links(linkHeaders);
       res.json(result.data);
     },
@@ -104,9 +109,19 @@ var buildSelectorsData = co.wrap(function*() {
       selectorName: 'Project Size (KB)',
       type: 'range',
       min: 1,
-      max: (yield getMaxProjectSize()),
+      max: yield getMaxProjectSize(),
       left: 1,
-      right: (yield getMaxProjectSize()),
+      right: yield getMaxProjectSize(),
+    },
+    {
+      category: 'filter',
+      selectorPropName: 'popularity',
+      selectorName: 'Popularity (Star)',
+      type: 'range',
+      min: 1,
+      max: yield getMaxProjectPopularity(),
+      left: 1,
+      right: yield getMaxProjectPopularity(),
     },
     {
       category: 'sorter',
