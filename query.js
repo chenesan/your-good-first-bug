@@ -1,5 +1,5 @@
-const sequelize = require('sequelize');
-const models = require('./models');
+import co from 'co';
+import models from './models';
 
 function parseQueryString(qs) {
   if (!qs) {
@@ -121,6 +121,29 @@ function buildQuery(rawQuery) {
       }
       return newQuery;
     },
+    popularity: (q, popularity) => {
+      const newQuery = Object.assign({}, q);
+      let hasIncludedProject = false;
+      const includeLength = newQuery.include.length;
+      for (let i = 0; i < includeLength; i++) {
+        const includedModel = newQuery.include[i];
+        if (includedModel.model === models.Project) {
+          hasIncludedProject = true;
+          includedModel.where = includedModel.where ? includedModel.where : {};
+          includedModel.where.popularity = buildComparedQueryFromRawQS(popularity);
+        }
+      }
+      if (!hasIncludedProject) {
+        newQuery.include.push({
+          model: models.Project,
+          attributes: ['name', 'url', 'description', 'size', 'popularity'],
+          where: {
+            popularity: buildComparedQueryFromRawQS(popularity),
+          },
+        });
+      }
+      return newQuery;
+    },
     projectSize: (q, projectSize) => {
       const newQuery = Object.assign({}, q);
       let hasIncludedProject = false;
@@ -136,7 +159,7 @@ function buildQuery(rawQuery) {
       if (!hasIncludedProject) {
         newQuery.include.push({
           model: models.Project,
-          attributes: ['name', 'url', 'description', 'size'],
+          attributes: ['name', 'url', 'description', 'size', 'popularity'],
           where: {
             size: buildComparedQueryFromRawQS(projectSize),
           },
@@ -203,7 +226,10 @@ function queryIssues(rawQuery, page = 1, limit = 100) {
   console.log('Receive rawQuery: ', rawQuery);
   const query = buildQuery(rawQuery);
   const paginatedQuery = buildPaginatedQuery(query, page, limit);
-  console.log('Build query: ', paginatedQuery, paginatedQuery.include[0].where);
+  console.log(
+    'Build query: ', paginatedQuery,
+    'Project where query: ', paginatedQuery.include[0].where
+  );
   return models.Issue.findAndCountAll(paginatedQuery)
   .catch((err) => { throw err; })
   .then(
@@ -231,10 +257,13 @@ const queryDistinctLanguages = () => {
   );
 };
 
-const getMaxProjectSize = () => models.Project.getMaxProjectSize;
+const getMaxProjectSize = () => models.Project.getMaxCol('size');
+
+const getMaxProjectPopularity = () => models.Project.getMaxCol('popularity');
 
 module.exports = {
   queryIssues,
   queryDistinctLanguages,
   getMaxProjectSize,
+  getMaxProjectPopularity,
 };

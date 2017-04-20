@@ -16,6 +16,14 @@ const initialState = {
       left: 1,
       right: 65535,
     },
+    popularity: {
+      type: 'range',
+      name: 'Popularity (Star)',
+      min: 1,
+      max: 65535,
+      left: 1,
+      right: 65535,
+    },
   },
   sorter: {
     sortBy: {
@@ -151,21 +159,24 @@ export const getSelectorValue = (state, subSelectorsName, selectorPropName) => {
   return selectorGetterMap[selector.type](selector);
 };
 
+const buildRangeQuery = (state, selectorGroupName, selectorName) => {
+  const { left, right } = getSelectorValue(state, selectorGroupName, selectorName);
+  return JSON.stringify({
+    operator: '&',
+    value: [
+      { operator: '<=', value: right },
+      { operator: '>=', value: left },
+    ],
+  });
+};
+
 export const buildQuery = (state) => {
   const config = {};
   if (getSelectorValue(state, 'filter', 'language') !== 'all') {
     config.language = getSelectorValue(state, 'filter', 'language');
   }
-  if (getSelectorValue(state, 'filter', 'projectSize') !== 'all') {
-    const { left, right } = getSelectorValue(state, 'filter', 'projectSize');
-    config.projectSize = JSON.stringify({
-      operator: '&',
-      value: [
-        { operator: '<=', value: right },
-        { operator: '>=', value: left },
-      ],
-    });
-  }
+  config.projectSize = buildRangeQuery(state, 'filter', 'projectSize');
+  config.popularity = buildRangeQuery(state, 'filter', 'popularity');
   config.sortBy = getSelectorValue(state, 'sorter', 'sortBy');
   config.order = getSelectorValue(state, 'sorter', 'order');
   return config;
