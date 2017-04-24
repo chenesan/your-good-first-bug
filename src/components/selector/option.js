@@ -7,7 +7,7 @@ class Option extends Component {
   }
   onChangeHandler(event) {
     const selectedIndex = this.props.options.findIndex(
-      (option) => option.value === event.currentTarget.value
+      option => option.value === event.currentTarget.value
     );
     this.props.changeHandler({ selectedIndex });
   }
@@ -21,7 +21,7 @@ class Option extends Component {
       >
         {
           options.map(
-            (option) => (
+            option => (
               <option value={option.value} selected={option.value === currentValue}>
                 {option.description || option.value }
               </option>

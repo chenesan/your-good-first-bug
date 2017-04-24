@@ -6,7 +6,7 @@ function buildLinkStateFromLinkHeader(linkHeader) {
   const data = {};
   const state = {};
   if (linkHeader) {
-    linkHeader.split(',').forEach(line => {
+    linkHeader.split(',').forEach((line) => {
       const [urlSeg, relSeg] = line.split(';').map(val => val.trim());
       const url = urlSeg.slice(1, -1);
       const rel = relSeg.split('=')[1].slice(1, -1);

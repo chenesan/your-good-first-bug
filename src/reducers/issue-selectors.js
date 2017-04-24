@@ -42,8 +42,8 @@ const initialState = {
 };
 
 const selectorGetterMap = {
-  option: (selector) => selector.options[selector.selectedIndex].value,
-  range: (selector) => ({
+  option: selector => selector.options[selector.selectedIndex].value,
+  range: selector => ({
     left: selector.left,
     right: selector.right,
   }),
@@ -64,8 +64,8 @@ const selectorUpdateMap = {
     const oldOptions = selector.options;
     const newOptions = [...oldOptions].concat(
       dataObj.options.filter(
-        (option) => oldOptions.every(
-          (oldOption) => oldOption.value !== option.value
+        option => oldOptions.every(
+          oldOption => oldOption.value !== option.value
         )
       )
     );
@@ -182,5 +182,5 @@ export const buildQuery = (state) => {
   return config;
 };
 
-export const getSelectors = (state) => state;
+export const getSelectors = state => state;
 export default issueSelectors;
