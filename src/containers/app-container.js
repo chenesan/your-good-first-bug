@@ -5,7 +5,7 @@ import { isFetching, hasReachedPageEnd, fetchingIsFailed } from '../reducers/dat
 import { getSelectors } from '../reducers/issue-selectors';
 import { changeSelectors, cleanIssueData, fetchIssues } from '../actions';
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   issueList: getIssueList(state),
   fetching: isFetching(state.data),
   fetchingIsFailed: fetchingIsFailed(state.data),
@@ -13,7 +13,7 @@ const mapStateToProps = (state) => ({
   selectors: getSelectors(state.issueSelectors),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   loadIssueList: () => {
     dispatch(fetchIssues());
   },

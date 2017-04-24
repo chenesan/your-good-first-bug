@@ -36,7 +36,7 @@ const changeStatus = (status, option) => {
   return Object.assign({}, status, updatedStatus);
 };
 
-const buildIssue = (rawIssue) => (
+const buildIssue = rawIssue => (
   {
     title: rawIssue.title,
     body: rawIssue.body,
@@ -134,16 +134,12 @@ export const data = (state = initialState, action) => {
 
 // selector
 
-export const isFetching = (state) => state.status.fetching;
-export const fetchingIsFailed = (state) => state.status.fetchingResult === FETCHING_RESULT.FAIL;
-export const hasReachedPageEnd = (state) => {
-  return state.status.link.isEnd;
-};
-export const getNextLink = (state) => (
+export const isFetching = state => state.status.fetching;
+export const fetchingIsFailed = state => state.status.fetchingResult === FETCHING_RESULT.FAIL;
+export const hasReachedPageEnd = state => state.status.link.isEnd;
+export const getNextLink = state => (
   state.status.link.next === NO_NEXT_LINK ? null : state.status.link.next
 );
-export const getRootUrl = (state) => state.status.link.root;
-export const hasReadLink = (state) => {
-  return false;
-};
+export const getRootUrl = state => state.status.link.root;
+export const hasReadLink = state => false;
 export default data;

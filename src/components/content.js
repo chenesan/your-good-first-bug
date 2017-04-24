@@ -9,7 +9,7 @@ export default function Content(props) {
     // so there's no result.
     innerContent = <NoResult />;
   } else {
-    innerContent = props.issueList.map((issueData) => (
+    innerContent = props.issueList.map(issueData => (
       <IssueItem issueData={issueData} />
     ));
   }

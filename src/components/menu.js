@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import SubSelectors from './sub-selectors';
+import GithubStarButton from './icons/github-star-button';
 
 class Menu extends Component {
   constructor(props) {
@@ -41,6 +42,7 @@ class Menu extends Component {
         name="Filter" propName="filter" selectors={this.props.selectors.filter}
         selectorChangeHandler={this.selectorChangeHandler}
       />
+      <GithubStarButton />
     </aside>);
   }
 }

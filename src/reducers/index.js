@@ -7,7 +7,7 @@ const reducer = combineReducers({
   issueSelectors,
 });
 
-export const getIssueList = (state) => state.data.issueListIds.map(
+export const getIssueList = state => state.data.issueListIds.map(
   id => state.data.issueListById[id]
 );
 
