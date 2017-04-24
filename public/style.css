@@ -494,13 +494,11 @@ body {
     left: 0px;
     top: 0px;
     height: 100vh;
-    -webkit-transition: left 1s;
     transition: left 1s;
     background: #c6c6c6;
     z-index: 2000; }
   .main-menu.-hide {
     left: -225px;
-    -webkit-transition: left 1s;
     transition: left 1s; }
   .main-menu > .sub-selectors {
     margin-top: 20px; }
